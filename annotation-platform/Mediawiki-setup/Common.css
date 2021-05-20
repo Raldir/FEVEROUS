@@ -1,0 +1,37 @@
+/* CSS placed here will be applied to all skins */
+/** Hide sidebar **/
+div#mw-panel {
+  display: none;
+}
+div#mw-page-base{
+  display: none;
+}
+#vector-menu-content{
+  display: none;
+}
+#vector-menu-portal{
+  display: none;
+}
+#p-views{
+  display: none;
+}
+#p-cactions{
+  display: none;
+}
+div#mw-panel {
+  display: none;
+}
+div#p-personal{
+  display: none;
+}
+#left-navigation {
+  display: none;
+}
+#p-personal {
+  display: none;
+}
+#mw-head-base,
+div#content,
+div#footer {
+  margin-left: 1em;
+}

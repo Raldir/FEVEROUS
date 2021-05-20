@@ -1,0 +1,3 @@
+<Files "db_params.ini">
+  Require all denied
+</Files>

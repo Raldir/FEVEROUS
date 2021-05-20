@@ -1,0 +1,133 @@
+.topnav {
+  background-color: #333;
+  overflow: hidden;
+  height: 2em;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 12px 14px;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+iframe#my-wikipedia{
+   width: 100%;
+     height: 65%;
+     visibility: hidden;
+     /* float: left;
+     position:relative */
+   }
+
+.additemspan{
+        cursor: pointer;
+}
+
+/* Dont make menu frame position relative, otherwise margin increases and covers title. 30%; */
+/* 330 */
+.menu-frame {
+  height: 20em;
+  /* max-height: 30%; */
+  width: 100%;
+  background: powderblue;
+  border-style: solid;
+  opacity: 1;
+  z-index: 0;
+  overflow-y: auto;
+  /* margin:5px; */
+}
+
+
+.filter-option-inner{
+  font-size:12px;
+}
+
+.filter-option-inner-inner{
+    font-size: 12px;
+}
+
+.popup_content {
+  margin: 10px;
+  padding: 0 10px;
+  max-width: 60%;
+  border: 2px solid #444;
+  background: white;
+  visibility: visible;
+}
+
+
+.generated-claim-div{
+  display: inline-block; /*  if not inline as well creates weird margin */
+  position: relative;
+  /* top: 5%; */
+  /* left: 10%; */
+  width: 90%;
+}
+
+.claim-generation-specifications p {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  white-space: nowrap;
+
+}
+
+.claim-generation-specifications p {
+  display: inline-block;
+
+}
+
+.box-label{
+  display: inline-block;
+  width: 20%;
+}
+
+#submission-buttons{
+  display: block;
+  position: relative;
+  width: 40%;
+  left: 35%;
+  top: 15%;
+}
+
+
+p {
+  font-size: 0.8vw;
+}
+span {
+  font-size: 0.8vw;
+}
+
+
+input {
+  font-size: 1vw;
+  width: 52vw;
+}
+
+
+
+.bootstrap-select {
+  width: 12vw !important;
+  /* font-size: 1vw !important; */
+}
+
+.btn:focus,.btn:active {
+   outline: none !important;
+   box-shadow: none;
+}
+
+div .button-responsive {
+  /* font-size: 1vw; */
+  width:12vw;
+}
+
+
+div .button-responsive-info {
+  font-size: 1vw;
+}
+
+div .popover-body {
+  font-size: 0.7vw;
+}

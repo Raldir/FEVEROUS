@@ -1,0 +1,215 @@
+.topnav {
+  background-color: #333;
+  overflow: hidden;
+  height: 2em;
+}
+
+/* .btn.btn-primary[disabled] {
+    background-color: #00ff00;
+} */
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 12px 14px;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+iframe#my-wikipedia{
+   width: 100%;
+     height: 65%;
+     visibility: hidden;
+     /* float: left;
+     position:relative */
+   }
+
+.additemspan{
+        cursor: pointer;
+}
+
+/* Dont make menu frame position relative, otherwise margin increases and covers title. 30%; */
+/* 330 */
+.menu-frame {
+  height: 20em;
+  /* max-height: 30%; */
+  width: 100%;
+  background: powderblue;
+  border-style: solid;
+  opacity: 1;
+  z-index: 0;
+  overflow-y: auto;
+  /* margin:5px; */
+}
+
+
+.current-claim-div{
+  display: block;
+  overflow-y: auto;
+}
+
+.annotated-evidence-div-sets{
+    position:relative;
+    top:1em;
+}
+.annotated-evidence-div {
+  overflow-y: scroll;
+  position:relative;
+  height: 100px;
+  border-style: solid;
+  max-width: 50vw;
+  /* top:1em; */
+}
+
+.evidence-annotation-verdict{
+  position:relative;
+   /* top:2em; */
+  /* bottom: 1em; */
+}
+
+.evidence-annotation-submit{
+  position:relative;
+   overflow-x: hidden;
+  left:17%;
+}
+
+.results{
+  background: #7b8596;
+  color: white;
+}
+
+/* .text{
+    font-size:12px;
+} */
+
+.filter-option-inner{
+  font-size:12px;
+}
+
+.grid-container {
+  display: grid;
+  position:relative;
+  grid-template-columns: auto auto;
+  /* background-color: #2196F3; */
+  padding: 5px;
+}
+
+.grid-item {
+  /* background-color: rgba(255, 255, 255, 0.8); */
+  /* border: 1px solid rgba(0, 0, 0, 0.8); */
+  padding: 5px;
+  text-align: center;
+}
+
+/* .select-menu{
+  height: 2em;
+  max-width: 12vw;
+} */
+
+.final-button{
+  height: 2em;
+}
+
+.filter-option-inner-inner{
+    font-size: 12px;
+}
+
+.popup_content {
+  margin: 10px;
+  padding: 0 10px;
+  max-width: 60%;
+  border: 2px solid #444;
+  background: white;
+  visibility: visible;
+}
+
+/*
+Claim annotation
+ */
+
+.generated-claim-div{
+  display: inline-block; /*  if not inline as well creates weird margin */
+  position: relative;
+  /* top: 5%; */
+  /* left: 10%; */
+  width: 90%;
+}
+
+.claim-generation-specifications p {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  white-space: nowrap;
+  /* overflow: hidden; /* Hide scrollbars */
+  /* bottom: 37%; */
+  /* overflow-x: scroll; */
+  /* bottom: 7em; */
+  /* max-width: 15em; */
+  /* margin: 0em; */
+
+}
+
+.claim-generation-specifications p {
+  display: inline-block;
+
+}
+
+.box-label{
+  display: inline-block;
+  width: 20%;
+}
+
+#submission-buttons{
+  display: block;
+  position: relative;
+  width: 40%;
+  /* align: center; */
+  /* right:1em; */
+  left: 35%;
+  top: 15%;
+}
+
+
+p {
+  font-size: 0.8vw;
+}
+span {
+  font-size: 0.8vw;
+}
+
+/* button {
+  font-size: 1vw;
+   width: 2vmin;
+} */
+
+input {
+  font-size: 1vw;
+  width: 52vw;
+}
+
+
+
+.bootstrap-select {
+  width: 12vw !important;
+  /* font-size: 1vw !important; */
+}
+
+.btn:focus,.btn:active {
+   outline: none !important;
+   box-shadow: none;
+}
+
+div .button-responsive {
+  /* font-size: 1vw; */
+  width:12vw;
+}
+
+
+div .button-responsive-info {
+  font-size: 1vw;
+}
+
+div .popover-body {
+  font-size: 0.7vw;
+}

@@ -1,0 +1,11 @@
+Common.css: http://fever.raly.me/index.php/MediaWiki:Common.css
+http://fever.raly.me/index.php?title=MediaWiki:Common.css&action=edit
+
+login:
+http://fever.raly.me/index.php?title=Special:UserLogin&returnto=MediaWiki%3ACommon.css
+
+
+
+
+Backup database:
+cat /var/lib/automysqlbackup/daily/my_wiki/my_wiki_2020-11-29_18h03m.Sonntag.sql | mysql -u root -p my_wiki

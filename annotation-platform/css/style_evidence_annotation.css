@@ -1,0 +1,155 @@
+.topnav {
+  background-color: #333;
+  overflow: hidden;
+  height: 2em;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 12px 14px;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+iframe#my-wikipedia{
+   width: 100%;
+     height: 65%;
+     visibility: hidden;
+     /* float: left;
+     position:relative */
+   }
+
+.additemspan{
+        cursor: pointer;
+}
+
+/* Dont make menu frame position relative, otherwise margin increases and covers title. 30%; */
+/* 330 */
+.menu-frame {
+  height: 20em;
+  /* max-height: 30%; */
+  width: 100%;
+  background: powderblue;
+  border-style: solid;
+  opacity: 1;
+  z-index: 0;
+  /* margin:5px; */
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+th{
+  background:	#A9A9A9;
+}
+
+.current-claim-div{
+  display: block;
+  overflow-y: auto;
+}
+
+.annotated-evidence-div-sets{
+    position:relative;
+    top:1em;
+}
+.annotated-evidence-div {
+  overflow-y: scroll;
+  position:relative;
+  height: 100px;
+  border-style: solid;
+  max-width: 50vw;
+  /* top:1em; */
+}
+
+.evidence-annotation-verdict{
+  position:relative;
+}
+
+.evidence-annotation-submit{
+  position:relative;
+  /* overflow-x: hidden; */
+  /* left:17%; */
+}
+
+.results{
+  background: #7b8596;
+  color: white;
+}
+
+
+.filter-option-inner{
+  font-size:12px;
+}
+
+.grid-container {
+  display: grid;
+  position:relative;
+  grid-template-columns: auto auto;
+  /* background-color: #2196F3; */
+  padding: 5px;
+}
+
+.grid-item {
+  padding: 5px;
+  text-align: center;
+}
+
+
+.final-button{
+  height: 2em;
+}
+
+.filter-option-inner-inner{
+    font-size: 12px;
+}
+
+.popup_content {
+  margin: 10px;
+  padding: 0 10px;
+  max-width: 60%;
+  border: 2px solid #444;
+  background: white;
+  visibility: visible;
+}
+
+
+p {
+  font-size: 0.8vw;
+}
+span {
+  font-size: 0.8vw;
+}
+
+input {
+  font-size: 1vw;
+  width: 52vw;
+}
+
+
+
+.bootstrap-select {
+  width: 12vw !important;
+  /* font-size: 1vw !important; */
+}
+
+.btn:focus,.btn:active {
+   outline: none !important;
+   box-shadow: none;
+}
+
+div .button-responsive {
+  /* font-size: 1vw; */
+  width:12vw;
+}
+
+
+div .button-responsive-info {
+  font-size: 1vw;
+}
+
+div .popover-body {
+  font-size: 0.7vw;
+}
