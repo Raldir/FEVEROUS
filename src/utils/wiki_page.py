@@ -78,7 +78,6 @@ class WikiPage:
                 # print(str(section))
                 self.page_items[entry ] = section
 
-
         self.page_order = [el for el in dict['order'] if el in self.page_items]
 
     def get_title_content(self):
@@ -240,7 +239,7 @@ class WikiPage:
             print(self.title.content)
             print(self.page_items.keys())
         page_position = self.page_order.index(element_id)
-        
+
         before_elements = self.page_order[:page_position]
         before_elements = self.convert_ids_to_objects(before_elements)
         before_elements.reverse()

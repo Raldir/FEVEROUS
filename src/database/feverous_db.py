@@ -8,6 +8,7 @@
 
 import sqlite3
 from . import utils
+import json
 
 
 class FeverousDB(object):
@@ -53,7 +54,7 @@ class FeverousDB(object):
         )
         result = cursor.fetchone()
         cursor.close()
-        return result if result is None else result[0]
+        return result if result is None else json.loads(result[0])
 
     def get_non_empty_doc_ids(self):
         """Fetch all ids of docs stored in the db."""
