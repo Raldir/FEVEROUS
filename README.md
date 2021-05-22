@@ -25,7 +25,7 @@ context_sentence_0 = wiki_page.get_context('sentence_14') # Returns list of Wiki
 ### Reading Wikipedia data
 
 #### Reading Tables
-`WikiTables` normalize tables to `column_span` and `row_span=1` and add other quality of life functions to process tables quickly.
+A `WikiTable` object takes a table from the Wikipedia Data and normalizes the table to `column_span` and `row_span=1`. It also adds other quality of life features to process tables and rows quickly.
 
 ```python
 wiki_tables = wiki_page.get_tables() #return list of all Wiki Tables
