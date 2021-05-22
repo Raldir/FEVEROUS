@@ -25,6 +25,7 @@ class WikiTable(WikiElement):
         self.caption_id = 'table_caption_' + self.name.split('_')[-1]
         self.type = table_json['type']
         self.rows = [Row(row, i, self.page) for i,row in enumerate(self.table)]
+        self.header_rows = [row for row in self.rows if row.is_header_row()==True]
         self.cell_ids = [row.cell_ids for row in self.rows]
         self.cell_ids = list(itertools.chain(*self.cell_ids))
         self.linearized_table = '\n'.join([str(row) for row in self.rows])
@@ -61,8 +62,22 @@ class WikiTable(WikiElement):
     def get_cell_content(self, cell_id):
         return str(self.all_cells[cell_id])
 
+    def get_header_rows(self):
+        return self.header_rows
+
+    def get_rows(self):
+        return self.rows
+
+    def get_table_caption(self):
+        return self.caption
+    def get_table_caption_id(self):
+        return self.caption_id
+
     def get_cell(self, cell_id):
         return self.all_cells[cell_id]
+
+    def get_cells(self):
+        return self.all_cells
 
     def get_ids(self):
         return list(itertools.chain.from_iterable([row.get_ids() for row in self.rows])) + [self.caption_id]
@@ -115,9 +130,16 @@ class Row:
         self.cell_ids = [cell.name for cell in self.row]
         self.id = ' | '.join(self.cell_ids)
         self.cell_content = [cell.content for cell in self.row]
+        self._is_header_row = len([ele for ele in self.row if ele.is_header == False]) == 0
 
     def __str__(self):
         return ' | '.join([str(ele) for ele in self.row])
+
+    def is_header_row(self):
+        return self._is_header_row
+
+    def get_row_cells(self):
+        return self.row
 
     def get_id(self):
         return 'row_' + '_'.join(self.cell_ids[0].get_id().split('_')[1:])

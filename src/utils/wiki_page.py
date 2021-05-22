@@ -91,6 +91,17 @@ class WikiPage:
             if cell_id in tab.all_cells:
                 return tab.get_cell_content(cell_id)
 
+    def get_cell(self, cell_id):
+        for tab in self.get_tables():
+            if cell_id in tab.all_cells:
+                return tab.get_cell(cell_id)
+
+
+    def get_table_from_cell_id(self, cell_id):
+        for tab in self.get_tables():
+            if cell_id in tab.all_cells:
+                return tab
+
     def get_item_content(self, item_id):
         for list in self.get_lists():
             if item_id in list.list_items:

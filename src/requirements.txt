@@ -1,0 +1,6 @@
+regex==2020.10.23
+numpy==1.19.1
+scipy==1.5.4
+sklearn
+jsonlines==2.0.0
+tqdm==4.46.0
