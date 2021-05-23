@@ -30,7 +30,7 @@ context_sentence_0 = wiki_page.get_context('sentence_14') # Returns list of Wiki
 context_sentence_14 = wiki_page.get_context('sentence_14') # Returns list of Wiki elements
 ```
 ### Reading Tables
-A `WikiTable` object takes a table from the Wikipedia Data and normalizes the table to `column_span` and `row_span=1`. It also adds other quality of life features to processing the table or its rows.
+A `WikiTable` object takes a table from the Wikipedia Data and normalizes the table to `column_span=1` and `row_span=1`. It also adds other quality of life features to processing the table or its rows.
 
 ```python
 wiki_tables = wiki_page.get_tables() #return list of all Wiki Tables
