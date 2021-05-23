@@ -25,6 +25,9 @@ page_json = db.get_doc_json("Anarchism")
 wiki_page = WikiPage("Anarchism", page_json)
 
 context_sentence_14 = wiki_page.get_context('sentence_14') # Returns list of context Wiki elements
+
+prev_elements = wiki_page.get_previous_k_elements('sentence_5', k=4) #Gets Wiki element before sentence_5
+next_elements = wiki_page.get_next_k_elements('sentence_5', k=4) #Gets Wiki element after sentence_5
 ```
 
 ### WikiElement
@@ -56,4 +59,14 @@ row_representation_same = str(cells_row_0) #or just stringfy the row directly.
 
 #returns WikiTable from Cell_id. Useful for retrieving associated Tables for cell annotations.
 table_0_cell_dict = wiki_page.get_table_from_cell_id(cells_row_0[0].get_id())
+ ```
+ 
+### Reading Lists
+```python
+wiki_lists = wiki_page.get_lists()
+wiki_lists_0 = wiki_lists[0]
+#String representation: Prefixes '-' for unsorted elements and enumerations (1., 2. ...) for sorted elements
+print(str(wiki_lists_0))
+
+wiki_lists[0].get_list_by_level(0) #returns list elements by level
  ```
