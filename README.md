@@ -13,17 +13,8 @@ Install the package requirements at `src/requirements.txt`. Code has been tested
 
 ## Reading Wikipedia Data
 
-This repository contains elementary code to assist you in reading and processing the provided Wikipedia data. By creating a a `WikiPage` object using the json data of a Wikipedia article, every element of an article is instantiated as a `WikiElement`. There are five different `WikiElement`s: `WikiSentence`, `WikiTable`, `WikiList`, `WikiSection`, and `WikiTitle`.
+This repository contains elementary code to assist you in reading and processing the provided Wikipedia data. By creating a a `WikiPage` object using the json data of a Wikipedia article, every element of an article is instantiated as a `WikiElement` on top of several utility functions you can then use (e.g. get an element's context, get an element by it's annotation id, ...). 
 
-A `WikiElement` defines/overrides four functions:
-* `get_ids`: Returns list of all ids in that element
-* `get_id`: Return the specific id of that element
-* `id_repr`: Returns a string representation of all ids in that element
-* `__str__`: Returns a string representation of the element's content
-
-`WikiSection` additionally defines a function `get_level` to get the depth level of the section. `WikiTable` and `WikiList` have some additional funcions, explained below. 
-
-### Load Wikipedia Page From Database
 ```python
 from database.feverous_db import FeverousDB
 from utils.wiki_page import WikiPage
@@ -35,6 +26,17 @@ wiki_page = WikiPage("Anarchism", page_json)
 
 context_sentence_0 = wiki_page.get_context('sentence_14') # Returns list of Wiki elements
 ```
+
+### WikiElement
+There are five different `WikiElement`s: `WikiSentence`, `WikiTable`, `WikiList`, `WikiSection`, and `WikiTitle`.
+
+A `WikiElement` defines/overrides four functions:
+* `get_ids`: Returns list of all ids in that element
+* `get_id`: Return the specific id of that element
+* `id_repr`: Returns a string representation of all ids in that element
+* `__str__`: Returns a string representation of the element's content
+
+`WikiSection` additionally defines a function `get_level` to get the depth level of the section. `WikiTable` and `WikiList` have some additional funcions, explained below. 
 ### Retrieve Context For Wikipedia Element
 ```python
 context_sentence_14 = wiki_page.get_context('sentence_14') # Returns list of Wiki elements
