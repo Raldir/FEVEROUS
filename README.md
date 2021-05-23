@@ -13,7 +13,7 @@ Install the package requirements at `src/requirements.txt`. Code has been tested
 
 ## Reading Wikipedia Data
 
-This repository contains elementary code to assist you in reading and processing the provided Wikipedia data. By creating a a `WikiPage` object using the json data of a Wikipedia article, every element of an article is instantiated as a `WikiElement` on top of several utility functions you can then use (e.g. get an element's context, get an element by it's annotation id, ...). 
+This repository contains elementary code to assist you in reading and processing the provided Wikipedia data. By creating a a `WikiPage` object using the json data of a Wikipedia article, every element of an article is instantiated as a `WikiElement` on top of several utility functions you can then use (e.g. get an *element's context*, get an element by it's annotation id, ...). 
 
 ```python
 from database.feverous_db import FeverousDB
@@ -24,7 +24,7 @@ db =  FeverousDB("path_to_the_wiki")
 page_json = db.get_doc_json("Anarchism")
 wiki_page = WikiPage("Anarchism", page_json)
 
-context_sentence_0 = wiki_page.get_context('sentence_14') # Returns list of Wiki elements
+context_sentence_14 = wiki_page.get_context('sentence_14') # Returns list of context Wiki elements
 ```
 
 ### WikiElement
