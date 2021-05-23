@@ -2,7 +2,7 @@
 
 This repository (will) contains the code to generate and prepare the dataset, as well as the code of the annotation platform used to generate the FEVEROUS datset. Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the shared task.
 
-## Prepare Data & install requirements
+## Prepare Data & Install Requirements
 Download the data from the [resource page](https://fever.ai/resources.html). Namely:
 
 * Training Data
@@ -11,9 +11,9 @@ Download the data from the [resource page](https://fever.ai/resources.html). Nam
 
 Install the package requirements at `src/requirements.txt`. Code has been tested for `python3.7` and `python3.8`.
 
-## Reading Wikipedia data
+## Reading Wikipedia Data
 
-### Load Wikipedia Page
+### Load Wikipedia Page From Database
 ```python
 from database.feverous_db import FeverousDB
 from utils.wiki_page import WikiPage
@@ -25,7 +25,7 @@ wiki_page = WikiPage("Anarchism", page_json)
 
 context_sentence_0 = wiki_page.get_context('sentence_14') # Returns list of Wiki elements
 ```
-### Retrieve context for Wikipedia elements
+### Retrieve Context For Wikipedia Element
 ```python
 context_sentence_14 = wiki_page.get_context('sentence_14') # Returns list of Wiki elements
 ```
