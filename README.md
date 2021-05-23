@@ -28,7 +28,7 @@ context_sentence_0 = wiki_page.get_context('sentence_14') # Returns list of Wiki
 ```
 
 ### WikiElement
-There are five different `WikiElement`s: `WikiSentence`, `WikiTable`, `WikiList`, `WikiSection`, and `WikiTitle`.
+There are five different types of `WikiElement`: `WikiSentence`, `WikiTable`, `WikiList`, `WikiSection`, and `WikiTitle`.
 
 A `WikiElement` defines/overrides four functions:
 * `get_ids`: Returns list of all ids in that element
