@@ -1,6 +1,6 @@
 # Fact Extraction and VERification Over Unstructured and Structured information
 
-This repository (will) contains the code to generate and prepare the dataset, as well as the code of the annotation platform used to generate the FEVEROUS datset. Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the shared task.
+This repository maintains the code to generate and prepare the dataset, as well as the code of the annotation platform used to generate the FEVEROUS datset. Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the shared task.
 
 ## Prepare Data & Install Requirements
 Download the data from the [resource page](https://fever.ai/resources.html). Namely:
