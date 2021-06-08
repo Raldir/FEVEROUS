@@ -80,6 +80,23 @@ class WikiPage:
 
         self.page_order = [el for el in dict['order'] if el in self.page_items]
 
+    def get_element_by_id(self, id):
+        return self.page_items[id] if id in self.page_items else None
+
+    def get_previous_k_elements(self, element_id, k=1):
+        element_position = self.page_order.index(element_id)
+        return [self.get_element_by_id(ele) for ele in reversed(self.page_order[element_position-k:element_position])]
+        # return self.get_element_by_id(self.page_order[element_position-1]) if element_position-1 >=0 else None
+
+    def get_next_k_elements(self, element_id, k=1):
+        element_position = self.page_order.index(element_id)
+        return [self.get_element_by_id(ele) for ele in self.page_order[element_position +1 :element_position+(k+1)]]
+        # return self.get_element_by_id(self.page_order[element_position-1]) if element_position-1 >=0 else None
+
+    def get_next_element(self, element_id):
+        element_position = self.page_order.index(element_id)
+        return self.get_element_by_id(self.page_order[element_position-1]) if element_position-1 >=0 else None
+
     def get_title_content(self):
         return str(self.title)
 

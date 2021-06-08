@@ -32,3 +32,6 @@ class WikiSection(WikiElement):
 
     def __str__(self):
         return self.content
+
+    def get_level(self):
+        return self.level
