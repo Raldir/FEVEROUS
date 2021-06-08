@@ -82,7 +82,7 @@ wiki_lists[0].get_list_by_level(0) #returns list elements by level
 Our baseline retriever module is a combination of entity matching and TF-IDF using DrQA. We first extract the top $k$ pages by matching extracted entities from the claim with Wikipedia articles. If less than k pages have been identified this way, the remaining pages are selected by Tf-IDF matching between the introductory sentence of an article and the claim. To use TF-IDF matching we need to build a TF-IDF index. Run:
 ```
 PYTHONPATH=src python src/baseline/retriever/build_db.py data/feverous-wiki-pages.db data/feverous-wiki-docs.db
-PYTHONPATH=src python src/baseline/retriever/build_tfidf.pydata/feverous-wiki-docs.db data/index/
+PYTHONPATH=src python src/baseline/retriever/build_tfidf.py data/feverous-wiki-docs.db data/index/
  ```
  We can now extract the top k documents:
  ```
