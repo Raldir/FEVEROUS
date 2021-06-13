@@ -2,19 +2,7 @@
 
 This repository maintains the code to generate and prepare the dataset, as well as the code of the annotation platform used to generate the FEVEROUS datset. Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the shared task.
 
-## Prepare Data & Install Requirements
-Call the following script to download the FEVEROUS data:
-```
-./scripts/download_data.sh 
-```
-or you can download the data from the [FEVEROUS dataset page](https://fever.ai/dataset/feverous.html) directly. Namely:
-
-* Training Data
-* Development Data
-* Wikipedia Data as a database (sqlite3)
-
-After downloading the data, unpack the Wikipedia data into the same folder (i.e. `data`).
-
+## Install Requirements
 
 Create a new Conda environment and install torch: 
 ```
@@ -24,6 +12,19 @@ conda install pytorch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0 -c pytorch
 ```
 Then install the package requirements specified in `src/requirements.txt`. Then install the English Spacy model `python -m spacy download en_core_web_sm`.
 Code has been tested for `python3.7` and `python3.8`.
+
+## Prepare Data
+Call the following script to download the FEVEROUS data:
+```
+./scripts/download_data.sh 
+```
+Or you can download the data from the [FEVEROUS dataset page](https://fever.ai/dataset/feverous.html) directly. Namely:
+
+* Training Data
+* Development Data
+* Wikipedia Data as a database (sqlite3)
+
+After downloading the data, unpack the Wikipedia data into the same folder (i.e. `data`).
 
 ## Reading Data
 
