@@ -26,8 +26,11 @@ if __name__ == "__main__":
                 line['predicted_label'] = line['label']
             line['evidence'] = [el['content'] for el in line['evidence']]
             for j in range(len(line['evidence'])):
-                line['evidence'][j] = [[el.split('_')[0], el.split('_')[1], '_'.join(el.split('_')[2:])] for el in  line['evidence'][j]]
-            line['predicted_evidence'] = [[el.split('_')[0], el.split('_')[1], '_'.join(el.split('_')[2:])] for el in  line['predicted_evidence']]
+                # line['evidence'][j] = [[el.split('_')[0], el.split('_')[1], '_'.join(el.split('_')[2:])] for el in  line['evidence'][j]]
+                line['evidence'][j]= [[el.split('_')[0], el.split('_')[1] if 'table_caption' not in el and 'header_cell' not in el else '_'.join(el.split('_')[1:3]), '_'.join(el.split('_')[2:]) if 'table_caption' not in el and 'header_cell' not in el else '_'.join(el.split('_')[3:])] for el in  line['evidence'][j]]
+
+            line['predicted_evidence']= [[el.split('_')[0], el.split('_')[1] if 'table_caption' not in el and 'header_cell' not in el else '_'.join(el.split('_')[1:3]), '_'.join(el.split('_')[2:]) if 'table_caption' not in el and 'header_cell' not in el else '_'.join(el.split('_')[3:])] for el in line['predicted_evidence']]
+            # line['predicted_evidence'] = [[el.split('_')[0], el.split('_')[1], '_'.join(el.split('_')[2:])] for el in  line['predicted_evidence']]
             # print(line['predicted_evidence'])
             # line['label'] = line['verdict']
             predictions.append(line)

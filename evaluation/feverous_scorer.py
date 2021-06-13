@@ -35,7 +35,7 @@ def truncate_evidence(instance, max_evidence=None, max_evidence_cell=None):
     evidence_cell_count = 0
     evidence_count = 0
     for i, ele in enumerate(instance['predicted_evidence']):
-        if ele[1] == 'cell':
+        if ele[1]  in ['cell', 'item', 'table_caption', 'header_cell']:
             if max_evidence_cell is None:
                 continue
             else:
@@ -129,7 +129,7 @@ def evidence_micro_precision(instance):
     return this_precision, this_precision_hits
 
 
-def feverous_score(predictions,actual=None, max_evidence=5, max_evidence_cell=10):
+def feverous_score(predictions,actual=None, max_evidence=5, max_evidence_cell=25):
     correct = 0
     strict = 0
 
