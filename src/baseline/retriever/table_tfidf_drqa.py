@@ -3,7 +3,7 @@ import json
 from multiprocessing.pool import ThreadPool
 
 from baseline.drqa.retriever import utils
-from common.util.log_helper import LogHelper
+from utils.log_helper import LogHelper
 from tqdm import tqdm
 import numpy as np
 
@@ -89,6 +89,7 @@ if __name__ == "__main__":
     parser.add_argument('--max_page',type=int)
     parser.add_argument('--max_tabs',type=int)
     parser.add_argument('--use_precomputed', type=str2bool, default=True)
+    parser.add_argument('--data_path',type=str)
     parser.add_argument('--split', type=str)
     parser.add_argument('--ngram', type=int, default=2,
                         help=('Use up to N-size n-grams '
@@ -111,7 +112,7 @@ if __name__ == "__main__":
 
     jlr = JSONLineReader()
 
-    with open(args.in_file,"r") as f, open("data/{0}.tables.{3}.p{1}.t{2}.jsonl".format(args.split, args.max_page, args.max_tabs,"precomputed" if args.use_precomputed else "not_precomputed"), "w+") as out_file:
+    with open("{0}/{1}.pages.p{2}.jsonl".format(args.data_path, args.split, args.max_page),"r") as f, open("{0}/{1}.tables.{4}.p{2}.t{3}.jsonl".format(args.data_path, args.split, args.max_page, args.max_tabs,"precomputed" if args.use_precomputed else "not_precomputed"), "w+") as out_file:
         lines = jlr.process(f)
         #lines = tf_idf_claims_batch(lines)
 

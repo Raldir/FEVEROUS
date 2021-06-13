@@ -17,6 +17,48 @@ from utils.wiki_sentence import WikiSentence
 from utils.wiki_table import WikiTable
 from utils.util import *
 
+from urllib.parse import unquote
+from cleantext import clean
+import unicodedata
+
+def clean_title(text):
+    text = unquote(text)
+    text = clean(text.strip(),fix_unicode=True,               # fix various unicode errors
+    to_ascii=False,                  # transliterate to closest ASCII representation
+    lower=False,                     # lowercase text
+    no_line_breaks=False,           # fully strip line breaks as opposed to only normalizing them
+    no_urls=True,                  # replace all URLs with a special token
+    no_emails=False,                # replace all email addresses with a special token
+    no_phone_numbers=False,         # replace all phone numbers with a special token
+    no_numbers=False,               # replace all numbers with a special token
+    no_digits=False,                # replace all digits with a special token
+    no_currency_symbols=False,      # replace all currency symbols with a special token
+    no_punct=False,                 # remove punctuations
+    replace_with_url="<URL>",
+    replace_with_email="<EMAIL>",
+    replace_with_phone_number="<PHONE>",
+    replace_with_number="<NUMBER>",
+    replace_with_digit="0",
+    replace_with_currency_symbol="<CUR>",
+    lang="en"                       # set to 'de' for German special handling
+    )
+    return text
+
+def get_wikipage_by_id(id, db):
+    page = id.split('_')[0]
+    page = clean_title(page)
+    page = unicodedata.normalize('NFD', page).strip()
+    # pa = wiki_processor.process_title(page)
+    # print(page)
+    try:
+        lines = db.get_doc_json(page)
+        pa = WikiPage(page, lines)
+    except:
+        traceback.print_exc()
+        print(page)
+        pa = None
+    # print(lines)
+    return pa, page
 
 class WikiTitle(WikiElement):
     def __init__(self, name, content):

@@ -1,6 +1,10 @@
 regex==2020.10.23
 numpy==1.19.1
+transformers==4.1.1
 scipy==1.5.4
+clean-text==0.4.0
+pexpect==4.8.0
+spacy==2.3.2
 sklearn
 jsonlines==2.0.0
 tqdm==4.46.0

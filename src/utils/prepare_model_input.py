@@ -1,4 +1,4 @@
-from drqa.retriever.feverous_db import FeverousDB
+from database.feverous_db import FeverousDB
 from utils.wiki_page import WikiPage
 import jsonlines
 import json
@@ -128,7 +128,7 @@ def group_evidence_by_header(table):
 def prepare_input_schlichtkrull(annotation, gold):
     sequence = [annotation.claim]
     if gold:
-        evidence_by_page = get_evidence_by_page(annotation.flat_evidence) 
+        evidence_by_page = get_evidence_by_page(annotation.flat_evidence)
     else:
         evidence_by_page = get_evidence_by_page(annotation.predicted_evidence)
     for ele in evidence_by_page:

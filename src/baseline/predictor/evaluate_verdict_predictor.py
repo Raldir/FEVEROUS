@@ -18,11 +18,13 @@ import random
 import copy
 from tqdm import tqdm
 import os
+from utils.log_helper import LogHelper
 
 from utils.annotation_processor import AnnotationProcessor, EvidenceType
 from utils.prepare_model_input import prepare_input, init_db
 
-
+LogHelper.setup()
+logger = LogHelper.get_logger(__name__)
 
 class FEVEROUSDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels, use_labels = True):
@@ -113,7 +115,7 @@ def claim_evidence_predictor(annotations_dev, args):
     text_test = tokenizer(text_test, padding=True, truncation=True)
     test_dataset = FEVEROUSDataset(text_test, labels_test)
 
-    trainer, model = model_trainer(test_dataset)
+    trainer, model = model_trainer(args, test_dataset)
     predictions = trainer.predict(test_dataset)
     predictions = predictions.predictions.argmax(-1)
 
@@ -122,8 +124,8 @@ def claim_evidence_predictor(annotations_dev, args):
     map_verdict_to_index = {0:'NOT ENOUGH INFO', 1:'SUPPORTS', 2:'REFUTES'}
 
 
-    with jsonlines.open(os.path.join(args.data_path.split('.jsonl')[0] + '.verdict.jsonl'), 'w') as writer:
-        with jsonlines.open(os.path.join(args.data_path)) as f:
+    with jsonlines.open(os.path.join(args.input_path.split('.jsonl')[0] + '.verdict.jsonl'), 'w') as writer:
+        with jsonlines.open(os.path.join(args.input_path)) as f:
              for i,line in enumerate(f.iter()):
                  if i == 0:
                      writer.write({'header':''}) # skip header line
@@ -132,22 +134,23 @@ def claim_evidence_predictor(annotations_dev, args):
                  line['predicted_label'] = map_verdict_to_index[predictions_map[line['id']]]
                  writer.write(line)
 
-
-    print(scores['eval_class_rep'])
+    logger.info('Finished predicting verdicts...')
 
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_path', type=str, help='/path/to/data')
+    parser.add_argument('--input_path', type=str, help='/path/to/data')
     parser.add_argument('--model_path', type=str, help='/path/to/data')
     parser.add_argument('--wiki_path', type=str)
 
     args = parser.parse_args()
 
     annotations_dev = None
-    anno_processor_dev = AnnotationProcessor(args.data_path, has_content = True)
+    anno_processor_dev = AnnotationProcessor(args.input_path, has_content = True)
     init_db(args.wiki_path)
     annotations_dev = [annotation for annotation in anno_processor_dev]
+
+    logger.info('Start predicting verdicts...')
     claim_evidence_predictor(annotations_dev, args)
 
 

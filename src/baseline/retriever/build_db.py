@@ -17,9 +17,8 @@ import importlib.util
 from multiprocessing import Pool as ProcessPool
 from tqdm import tqdm
 from baseline.drqa.retriever import utils
-from common.util.log_helper import LogHelper
+from utils.log_helper import LogHelper
 from utils.wiki_page import WikiPage
-from utils.util import get_title_to_json_map
 from multiprocessing.pool import Pool
 from database.feverous_db import FeverousDB
 
@@ -64,8 +63,8 @@ def iter_files(path):
 
 def get_contents_sentence(entry):
     all_sentences = entry.get_sentences()
-    intro_sents_index = self.page_items.index('section_0') if 'section_0' in self.page_items else len(self.page_items) -1
-    sentences_in_intro = [sent for sent in all_sentences if self.page_items.index(sent.get_id()) < intro_sents_index]
+    intro_sents_index = entry.page_order.index('section_0') if 'section_0' in entry.page_order else len(entry.page_order) -1
+    sentences_in_intro = [sent for sent in all_sentences if entry.page_order.index(sent.get_id()) < intro_sents_index]
     text = ' '.join([str(s) for s in sentences_in_intro])
 
 
@@ -101,8 +100,8 @@ def store_contents(wiki_processor, save_path, preprocess, num_workers=None):
     # with Pool(4) as p:
     #     for num, doc in enumerate(p.imap_unordered(get_contents, wiki_processor)):
     docs = db.get_doc_ids()
-    for entry in docs:
-        page =  WikiPage(entry, get_doc_json(entry))
+    for entry in tqdm(docs):
+        page =  WikiPage(entry, db.get_doc_json(entry))
         doc = get_contents_sentence(page)
         count += 1
         c.execute("INSERT INTO documents VALUES (?,?,?)", doc)
@@ -143,7 +142,7 @@ if __name__ == '__main__':
         logger.info("Save directory doesn't exist. Making {0}".format(save_dir))
         os.makedirs(save_dir)
 
-    db =  FeverousDB(args.db_file)
+    db =  FeverousDB(args.db_path)
 
     store_contents(
         db, args.save_path, args.preprocess, args.num_workers

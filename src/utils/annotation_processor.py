@@ -17,7 +17,7 @@ import re
 from enum import Enum
 
 from utils.util import *
-from drqa.tokenizers.spacy_tokenizer import SpacyTokenizer
+from baseline.drqa.tokenizers.spacy_tokenizer import SpacyTokenizer
 TOKENIZER = SpacyTokenizer(annotators=set(['ner']))
 
 
@@ -29,7 +29,6 @@ class AnnotationProcessor:
     def __init__(self, input_path, has_content=False):
         self.input_path = input_path
         self.has_content = has_content
-        self.is_gold = is_gold
         self.annotations = self.process_annotations()
 
     def __iter__(self):
@@ -44,8 +43,9 @@ class AnnotationProcessor:
                  if i == 0: continue # skip header line
                  if len(line['evidence'][0]['content']) == 0: continue
                  try:
-                     yield Annotation(line, self.has_content, self.is_gold)
+                     yield Annotation(line, self.has_content)
                  except:
+                     traceback.print_exc()
                      print('Error while processing Annotation {}'.format(line['id']))
                      continue
 
@@ -56,7 +56,7 @@ class EvidenceType(Enum):
     JOINT = 3
 
 class Annotation:
-    def __init__(self, annotation_json, has_content, is_gold):
+    def __init__(self, annotation_json, has_content):
         self.annotation_json = annotation_json
         self.has_content = has_content
         self.convert_json_to_object(annotation_json)
@@ -81,7 +81,7 @@ class Annotation:
             self.predicted_evidence = annotation_json['predicted_evidence']
         if 'predicted_verdict' in annotation_json:
             self.predicted_vertdict = annotation_json['predicted_verdict']
-        self.source = annotation_json['source']
+        # self.source = annotation_json['source']
         if self.has_content:
             # print(annotation_json['evidence'])
             try:

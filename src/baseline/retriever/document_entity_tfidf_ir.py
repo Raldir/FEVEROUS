@@ -19,19 +19,18 @@ if __name__ == "__main__":
     parser.add_argument('--split',type=str)
     parser.add_argument('--count',type=int, default=1)
     parser.add_argument('--db',type=str)
-    parser.add_argument('--out_folder',type=str)
+    parser.add_argument('--data_path',type=str)
     parser.add_argument('--model', type=str, default=None)
     args = parser.parse_args()
 
     k = args.count
     split = args.split
     ranker = retriever.get_class('tfidf')(tfidf_path=args.model)
-    in_path = '{0}.jsonl'.format(split)
-    annotation_processor = AnnotationProcessor(in_path)
+    annotation_processor = AnnotationProcessor("{}/{}.jsonl".format(args.data_path, args.split))
     db = DocDB(args.db)
     document_titles = set(db.get_doc_ids())
 
-    with open("{0}.pages.p{1}.jsonl".format(args.out_folder, k),"w+") as f2:
+    with open("{0}/{1}.pages.p{2}.jsonl".format(args.data_path, args.split, k),"w+") as f2:
         annotations = [annotation for annotation in annotation_processor]
         for i, annotation in enumerate(tqdm(annotations)):
             js = {}

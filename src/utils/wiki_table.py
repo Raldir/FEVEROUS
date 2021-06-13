@@ -106,7 +106,7 @@ class Cell:
         self.name = cell['id']
 
     def __str__(self):
-        str = self.content if not self.is_header else self.content #'[H] ' + self.content
+        str = self.content if not self.is_header else '[H] ' + self.content
         return str
 
     def joint_repr(self):

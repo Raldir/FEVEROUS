@@ -1,15 +1,10 @@
-import pandas as pd
-import sqlalchemy as sq
 import sys
-from  nltk.metrics import agreement
 from datetime import datetime
 import math
 from collections import Counter
 from transformers import BertForSequenceClassification, Trainer, TrainingArguments, AdamW, RobertaForTokenClassification, RobertaTokenizer, AutoTokenizer
 from transformers.modeling_outputs import SequenceClassifierOutput
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
-from utils.wiki_page import WikiPage
-from database.feverous_db import FeverousDB
 import unicodedata
 from sklearn.model_selection import train_test_split
 import torch
@@ -27,7 +22,14 @@ from urllib.parse import unquote
 import torch
 
 from utils.annotation_processor import AnnotationProcessor, EvidenceType
-avail_classes_test = None
+from utils.wiki_page import WikiPage, get_wikipage_by_id
+from database.feverous_db import FeverousDB
+from utils.log_helper import LogHelper
+
+LogHelper.setup()
+logger = LogHelper.get_logger(__name__)
+
+
 
 class FEVEROUSDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels, use_labels = True):
@@ -62,8 +64,6 @@ def compute_metrics(pred):
     acc = accuracy_score(labels, preds)
     # map_verdict_to_index = {0:'Not enough Information', 1: 'Supported', 2:'Refuted'}
     class_rep = classification_report(labels, preds, output_dict=True)
-    print(class_rep)
-    print(acc, recall, precision, f1)
     return {
         'accuracy': acc,
         'f1': f1,
@@ -83,6 +83,7 @@ def model_trainer(args, test_dataset):
     per_device_eval_batch_size=16,   # batch size for evaluation
     # warmup_steps=0,                # number of warmup steps for learning rate scheduler
     logging_dir='./logs',
+    output_dir='./model_output'
     )
 
     trainer = Trainer(
@@ -108,44 +109,6 @@ def report_average(reports):
         mean_dict[label] = dictionary
 
     return mean_dict
-
-def clean_title(text):
-    text = unquote(text)
-    text = clean(text.strip(),fix_unicode=True,               # fix various unicode errors
-    to_ascii=False,                  # transliterate to closest ASCII representation
-    lower=False,                     # lowercase text
-    no_line_breaks=False,           # fully strip line breaks as opposed to only normalizing them
-    no_urls=True,                  # replace all URLs with a special token
-    no_emails=False,                # replace all email addresses with a special token
-    no_phone_numbers=False,         # replace all phone numbers with a special token
-    no_numbers=False,               # replace all numbers with a special token
-    no_digits=False,                # replace all digits with a special token
-    no_currency_symbols=False,      # replace all currency symbols with a special token
-    no_punct=False,                 # remove punctuations
-    replace_with_url="<URL>",
-    replace_with_email="<EMAIL>",
-    replace_with_phone_number="<PHONE>",
-    replace_with_number="<NUMBER>",
-    replace_with_digit="0",
-    replace_with_currency_symbol="<CUR>",
-    lang="en"                       # set to 'de' for German special handling
-    )
-    return text
-
-def get_wikipage_by_id(id, db):
-    page = id.split('_')[0]
-    page = clean_title(page)
-    page = unicodedata.normalize('NFD', page).strip()
-    # pa = wiki_processor.process_title(page)
-    # print(page)
-    try:
-        lines = db.get_doc_json(page)
-        pa = WikiPage(page, lines)
-    except:
-        print(page)
-        pa = None
-    # print(lines)
-    return pa, page
 
 
 def convert_evidence_into_tables_gold(annotation, db):
@@ -293,8 +256,6 @@ def extract_cells_from_tables(annotations, args):
         trainer, model = model_trainer(args, test_dataset)
         model_output = trainer.predict(test_dataset)
 
-        threshold = torch.nn.Threshold(0.3, 1)
-
         # predictions = model_output.predictions.argmax(-1)
         predictions =  (model_output.predictions > 0.25).astype(int)
         # print(predictions)
@@ -315,8 +276,8 @@ def extract_cells_from_tables(annotations, args):
         predictions_map = {value: [e for e in all_input_ids[i] if e !=0][:25] for i, value in enumerate(anno_ids)}
     # print(predictions_map.keys())
 
-    with jsonlines.open(os.path.join(args.data_path.split('.jsonl')[0] + '.cells.jsonl') , 'w') as writer:
-        with jsonlines.open(os.path.join(args.data_path)) as f:
+    with jsonlines.open(os.path.join(args.input_path.split('.jsonl')[0] + '.cells.jsonl') , 'w') as writer:
+        with jsonlines.open(os.path.join(args.input_path)) as f:
              for i,line in enumerate(f.iter()):
                  if i == 0:
                      writer.write({'header':''}) # skip header line
@@ -324,7 +285,7 @@ def extract_cells_from_tables(annotations, args):
                  if len(line['evidence'][0]['content']) == 0: continue
                  predicted_sentences= [ele[0] + '_sentence_' + ele[1].split('_')[1] for ele in line['predicted_evidence'][:args.max_sent]]
                  predicted_tables =  [ele[0] + '_table_' + ele[1].split('_')[1] for ele in line['predicted_evidence'][args.max_sent:]]
-                 line['predicted_evidence'] = set(list(predicted_sentences[:5] + predicted_tables[:3]))
+                 line['predicted_evidence'] = set(list(predicted_sentences + predicted_tables))
                  if not args.trivial_baseline:
                      line['predicted_evidence'] = [ele for ele in line['predicted_evidence'] if ('_table_' not in ele and '_table_caption_' not in ele)]
                  else:
@@ -335,10 +296,13 @@ def extract_cells_from_tables(annotations, args):
                          line['predicted_evidence'] += predictions_map[key]
                  writer.write(line)
 
+    logger.info('Finished extracting cells...')
+
+
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_path', type=str, help='/path/to/data')
+    parser.add_argument('--input_path', type=str, help='/path/to/data')
     parser.add_argument('--model_path', type=str, help='/path/to/data')
     parser.add_argument('--trivial_baseline', action='store_true', default=False)
     parser.add_argument('--max_sent', type=int, default=5, help='/path/to/data')
@@ -346,9 +310,10 @@ def main():
 
     args = parser.parse_args()
 
-    anno_processor =AnnotationProcessor(args.data_path)
+    anno_processor =AnnotationProcessor(args.input_path)
     annotations = [annotation for annotation in anno_processor]
     # annotations.sort(key=lambda x: x.source, reverse=True)
+    logger.info('Start extracting cells from Tables...')
     extract_cells_from_tables(annotations, args)
 
 

@@ -13,6 +13,7 @@ import re
 
 ALL_TITLES = {}
 
+
 class WikiElement(object):
     def get_ids(self) -> list:
         """Returns list of all ids in that element"""

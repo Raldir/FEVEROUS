@@ -1,7 +1,5 @@
 import pandas as pd
-import sqlalchemy as sq
 import sys
-from  nltk.metrics import agreement
 from datetime import datetime
 import math
 from collections import Counter
