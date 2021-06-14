@@ -101,7 +101,7 @@ PYTHONPATH=src python src/baseline/retriever/build_tfidf.py --db_path data/fever
  ```
  We can now extract the top k documents:
  ```
-PYTHONPATH=src python src/baseline/retriever/document_entity_tfidf_ir.py  --model data/index/feverous-tfidf-ngram=2-hash=16777216 --db data/feverous-wiki-docs.db --count 5 --split dev --data_path data/
+PYTHONPATH=src python src/baseline/retriever/document_entity_tfidf_ir.py  --model data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216 --db data/feverous-wiki-docs.db --count 5 --split dev --data_path data/
  ```
 The top l sentences and q tables of the selected pages are then scored separately using TF-IDF. We set l=5 and q=3.
 ```
