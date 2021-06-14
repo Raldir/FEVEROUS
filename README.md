@@ -105,7 +105,7 @@ PYTHONPATH=src python src/baseline/retriever/document_entity_tfidf_ir.py  --mode
  ```
 The top l sentences and q tables of the selected pages are then scored separately using TF-IDF. We set l=5 and q=3.
 ```
-PYTHONPATH=src python src/baseline/retriever/sentence_tfidf_drqa.py --db data/feverous_wikiv1.db--split dev --out_folder data --max_page 5 --max_sent 5 --use_precomputed false --data_path data/
+PYTHONPATH=src python src/baseline/retriever/sentence_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_sent 5 --use_precomputed false --data_path data/
 PYTHONPATH=src python src/baseline/retriever/table_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_tabs 3 --use_precomputed false --data_path data/
  ```
 Combine both retrieved sentences and tables into one file:
