@@ -137,4 +137,5 @@ python evaluation/evaluate.py --input_path data/dev.combined.not_precomputed.p5.
 Note that any input file needs to define the fields `label`, `predicted_label`, `evidence`, and `predicted_evidence` in the format specified in the file `feverous_scorer`.
 
 ## Shared Task submission
-TBA
+Submission for the FEVER Workshop 2021 Shared Task are done on the EvalAI platform: https://eval.ai/web/challenges/challenge-page/1091/.
+Before the release of the testing data on the *24. of July* you can submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used.  
