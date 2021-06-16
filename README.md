@@ -138,4 +138,6 @@ Note that any input file needs to define the fields `label`, `predicted_label`, 
 
 ## Shared Task submission
 Submission for the FEVER Workshop 2021 Shared Task are done on the EvalAI platform: https://eval.ai/web/challenges/challenge-page/1091/.
-Before the release of the testing data on the **24. of July** you can submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used.  
+Before the release of the testing data on the **24. of July** you can submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used.
+
+Submission files have to be in the same format as required for `evaluate.py`. To convert predictions from the step [verdict prediction](https://github.com/Raldir/FEVEROUS#Verdict_Prediction) to the submission format, call the script `prepare_submission.py`.
