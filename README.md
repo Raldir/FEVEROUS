@@ -96,17 +96,17 @@ wiki_lists[0].get_list_by_level(0) #returns list elements by level
 ### Retriever
 Our baseline retriever module is a combination of entity matching and TF-IDF using DrQA. We first extract the top $k$ pages by matching extracted entities from the claim with Wikipedia articles. If less than k pages have been identified this way, the remaining pages are selected by Tf-IDF matching between the introductory sentence of an article and the claim. To use TF-IDF matching we need to build a TF-IDF index. Run:
 ```
-PYTHONPATH=src python src/baseline/retriever/build_db.py --db_path data/feverous-wiki-pages.db --save_path data/feverous-wiki-docs.db
+PYTHONPATH=src python src/baseline/retriever/build_db.py --db_path data/feverous_wikiv1.db --save_path data/feverous-wiki-docs.db
 PYTHONPATH=src python src/baseline/retriever/build_tfidf.py --db_path data/feverous-wiki-docs.db --out_dir data/index/
  ```
  We can now extract the top k documents:
  ```
-PYTHONPATH=src python src/baseline/retriever/document_entity_tfidf_ir.py  --model data/index/feverous-tfidf-ngram=2-hash=16777216 --db data/feverous-wiki-docs.db --count 5 --split dev --data_path data/
+PYTHONPATH=src python src/baseline/retriever/document_entity_tfidf_ir.py  --model data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --db data/feverous-wiki-docs.db --count 5 --split dev --data_path data/
  ```
 The top l sentences and q tables of the selected pages are then scored separately using TF-IDF. We set l=5 and q=3.
 ```
-PYTHONPATH=src python src/baseline/retriever/sentence_tfidf_drqa.py --db data/feverous-wiki-pages.db--split dev --out_folder data --max_page 5 --max_sent 5 --use_precomputed false --data_path data/
-PYTHONPATH=src python src/baseline/retriever/table_tfidf_drqa.py --db data/feverous-wiki-pages.db --split dev --max_page 5 --max_tabs 3 --use_precomputed false --data_path data/
+PYTHONPATH=src python src/baseline/retriever/sentence_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_sent 5 --use_precomputed false --data_path data/
+PYTHONPATH=src python src/baseline/retriever/table_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_tabs 3 --use_precomputed false --data_path data/
  ```
 Combine both retrieved sentences and tables into one file:
  ```
@@ -117,13 +117,13 @@ For the next steps, we employ pre-trained transformers. You can either train the
 
 To extract relevant cells from extracted tables, run:
  ```
- PYTHONPATH=src python src/baseline/retriever/predict_cells_from_table.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.jsonl --max_sent 5 --wiki_path data/feverous-wiki-pages.db --model_path models/feverous_cell_extractor
+ PYTHONPATH=src python src/baseline/retriever/predict_cells_from_table.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.jsonl --max_sent 5 --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor
   ```
  
 ### Verdict Prediction
 To predict the verdict given either download our fine-tuned model  [here](https://drive.google.com/file/d/1E08IO0gU7H4Tod2vriIM3agynIkrscK9/view?usp=sharing) or train it yourself (c.f. Training). Again, we recommend training the model yourself as the model used in the paper has not been trained on the full training set. Then run:
 ```
- PYTHONPATH=src python src/baseline/predictor/evaluate_verdict_predictor.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl --wiki_path data/feverous-wiki-pages.db --model_path models/feverous_verdict_predictor
+ PYTHONPATH=src python src/baseline/predictor/evaluate_verdict_predictor.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor
  ```
  
 ### Training
