@@ -152,4 +152,6 @@ Before the release of the testing data on the **24. of July** you can submit you
 
 Submission files have to be in the same format as required for `evaluate.py`. To convert predictions from the verdict prediction step to the submission format, call the script `prepare_submission.py`.
 
-Contact
+## Contact
+
+Contact us either by e-mail `rmya2@cam.ac.uk` or on the [Fever Workshop slack channel](https://join.slack.com/t/feverworkshop/shared_invite/zt-4v1hjl8w-Uf4yg~diftuGvj2fvw7PDA) 
