@@ -1,6 +1,12 @@
 # Fact Extraction and VERification Over Unstructured and Structured information
 
-This repository maintains the code to generate and prepare the dataset, as well as the code of the annotation platform used to generate the FEVEROUS datset. Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the shared task.
+This repository maintains the code to generate and prepare the dataset, the code of the annotation platform, as well as the baseline described in the paper: [FEVEROUS: Fact Extraction and VERification Over
+Unstructured and Structured information](https://arxiv.org/pdf/2106.05707.pdf)
+
+> Fact verification has attracted a lot of attention in the machine learning and natural language processing communities, as it is one of the key methods for detecting misinformation. Existing large-scale benchmarks for this task have focused mostly on textual sources, i.e. unstructured information, and thus ignored the wealth of information available in structured formats, such as tables. In this paper we introduce a novel dataset and benchmark, Fact Extraction and VERification Over Unstructured and Structured information (FEVEROUS), which consists of 87,026 verified claims. Each claim is annotated with evidence in the form of sentences and/or cells from tables in Wikipedia, as well as a label indicating whether this evidence supports, refutes, or does not provide enough information to reach a verdict. Furthermore, we detail our efforts to track and minimize the biases present in the dataset and could be exploited by models, e.g. being able to predict the label without using evidence. Finally, we develop a baseline for verifying claims against text and tables which predicts both the correct evidence and verdict for 18% of the claims.
+
+## Shared Task
+Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the FEVER Workshop 2021 shared task @EMNLP on FEVEROUS. 
 
 ## Install Requirements
 
@@ -141,3 +147,5 @@ Submission for the FEVER Workshop 2021 Shared Task are done on the EvalAI platfo
 Before the release of the testing data on the **24. of July** you can submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used.
 
 Submission files have to be in the same format as required for `evaluate.py`. To convert predictions from the verdict prediction step to the submission format, call the script `prepare_submission.py`.
+
+Contact
