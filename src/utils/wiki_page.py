@@ -99,7 +99,7 @@ class WikiPage:
                 except Exception:
                     self.error_dict['tables_formatting_errors']+=1
                     # traceback.print_exc()
-                    logging.warning("Table formatting error in {}, {}".format(title, entry))
+                    # logging.warning("Table formatting error in {}, {}".format(title, entry))
             if entry.startswith('list_'):
                 if len(dict[entry]['list']) == 0 or len([en['value'] for en in dict[entry]['list'] if en['value'] != '']) == 0:
                     self.error_dict['list_empty'] +=1
@@ -109,7 +109,7 @@ class WikiPage:
                     self.page_items[entry] = tab
                 except Exception:
                     self.error_dict['list_formatting_errors']+=1
-                    logging.warning("List formatting error in {}, {}".format(title, entry))
+                    # logging.warning("List formatting error in {}, {}".format(title, entry))
                     # traceback.print_exc()
                     # print(title, entry)
             elif entry.startswith('sentence_'):

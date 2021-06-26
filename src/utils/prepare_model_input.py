@@ -48,6 +48,7 @@ def get_wikipage_by_id(id):
     return pa
 
 def get_evidence_text_by_id(id, wikipage):
+    id_org = id
     id = '_'.join(id.split('_')[1:])
     if id.startswith('cell_') or id.startswith('header_cell_'):
         content = wikipage.get_cell_content(id)
@@ -59,7 +60,7 @@ def get_evidence_text_by_id(id, wikipage):
         if id in wikipage.get_page_items(): #Filters annotations that are not in the most recent Wikidump (due to additionally removed pages)
             content =  str(wikipage.get_page_items()[id])
         else:
-            print('Evidence text not found.')
+            print('Evidence text: {} in {} not found.'.format(id, id_org))
             content = ''
     return content
 
