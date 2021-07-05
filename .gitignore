@@ -1,6 +1,8 @@
 #Custom
 feverous_wikiv1.db
 data/
+logs/
+mlruns/
 models/
 
 # Byte-compiled / optimized / DLL files
