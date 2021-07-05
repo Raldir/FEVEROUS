@@ -10,8 +10,6 @@ import os
 def get_class(name):
     if name == 'tfidf':
         return TfidfDocRanker
-    if name == 'bm25':
-        return BM25DocRanker
     if name == 'sqlite':
         return DocDB
     if name == 'memory':
@@ -21,5 +19,4 @@ def get_class(name):
 
 from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
-from .BM25_doc_ranker import BM25DocRanker
 from .simple import Simple
