@@ -59,7 +59,7 @@ def get_evidence_text_by_id(id, wikipage):
         if id in wikipage.get_page_items(): #Filters annotations that are not in the most recent Wikidump (due to additionally removed pages)
             content =  str(wikipage.get_page_items()[id])
         else:
-            print('Evidence text not found.')
+            print('Evidence text: {} not found.'.format(id))
             content = ''
     return content
 
