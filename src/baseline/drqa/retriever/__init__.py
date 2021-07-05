@@ -19,5 +19,4 @@ def get_class(name):
 
 from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
-from .BM25_doc_ranker import BM25DocRanker
 from .simple import Simple
