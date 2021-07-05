@@ -1,4 +1,3 @@
-import pandas as pd
 import sys
 from datetime import datetime
 import math
@@ -75,12 +74,12 @@ def model_trainer(model_path, train_dataset, test_dataset=None):
     training_args = TrainingArguments(
     output_dir=model_path,          # output directory
     num_train_epochs=3,              # total # of training epochs
-    per_device_train_batch_size=1,  # batch size per device during training
-    per_device_eval_batch_size=1,   # batch size for evaluation
+    per_device_train_batch_size=16,  # batch size per device during training
+    per_device_eval_batch_size=16,   # batch size for evaluation
     # gradient_accumulation_steps=3,
     warmup_steps=0,                # number of warmup steps for learning rate scheduler
     weight_decay=0.01,               # strength of weight decay
-    logging_dir= os.path.join(model_path, 'logs')',            # directory for storing logs
+    logging_dir= os.path.join(model_path, 'logs'),            # directory for storing logs
     logging_steps=1200,
     save_steps = 1200,
     # save_strategy='epoch'
@@ -178,12 +177,12 @@ def main():
     init_db(args.wiki_path)
     anno_processor_train =AnnotationProcessor(args.train_data_path, has_content = True)
     annotations_train = [annotation for annotation in anno_processor_train]
-    annotations_train = annotations_train[:200]
+    annotations_train = annotations_train
     if args.sample_nei:
         annotations_train = sample_nei_instances(annotations_train)
     annotations_dev = None
     anno_processor_dev = AnnotationProcessor(args.dev_data_path, has_content = True)
-    annotations_dev = [annotation for annotation in anno_processor_dev][:200]
+    annotations_dev = [annotation for annotation in anno_processor_dev]
 
     claim_evidence_predictor(annotations_train, annotations_dev, args)
 
