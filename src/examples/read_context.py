@@ -1,5 +1,5 @@
 from database.feverous_db import FeverousDB
-from utils.wiki_page import WikiPage
+from utils.wiki_page import WikiPage,get_wikipage_by_id
 import argparse
 
 if __name__ == "__main__":
@@ -10,6 +10,7 @@ if __name__ == "__main__":
 
 	page_json = db.get_doc_json("Anarchism")
 	# print(page_json)
+
 	wiki_page = WikiPage("Anarchism", page_json)
 
 	context_sentence_55 = wiki_page.get_context('sentence_55') # Returns list of Wiki elements

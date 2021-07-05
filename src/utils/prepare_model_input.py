@@ -41,7 +41,7 @@ def init_db(wiki_path):
 
 def get_wikipage_by_id(id):
     page = id.split('_')[0]
-    page = clean_title(page)
+    # page = clean_title(page)
     page = unicodedata.normalize('NFD', page).strip()
     lines = DB.get_doc_json(page)
     pa = WikiPage(page, lines)
