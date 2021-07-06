@@ -22,6 +22,7 @@ import itertools
 from cleantext import clean
 import unicodedata
 from urllib.parse import unquote
+import os
 
 
 from utils.annotation_processor import AnnotationProcessor, EvidenceType
@@ -49,38 +50,8 @@ def process_data(claim_verdict_list):
     labels = [x[1] for x in claim_verdict_list] #get value from enum
     #
 
-
-
     return text, labels
 
-def score_by_cell_num(pred):
-    labels = pred.label_ids
-    preds = pred.predictions.argmax(-1)
-
-    lab_by_cell_num = {0: [], 1: [], 2: [], 3:[], 4:[], 5:[], 6:[]}
-    pred_by_cell_num = {0: [], 1: [], 2: [], 3:[], 4:[], 5:[], 6:[]}
-    for i,lab in enumerate(labels):
-        lab = list(lab)
-        pred_c = list(preds[i])
-        pred_c = [pred for i, pred in enumerate(pred_c) if lab[i] != -100]
-        lab = [la for la in lab if la != -100]
-        app = lab.count(1)
-        if app <=5 :
-            lab_by_cell_num[app] += lab
-            pred_by_cell_num[app] += pred_c
-        else:
-            lab_by_cell_num[6] += lab
-            pred_by_cell_num[6] += pred_c
-
-    for key, value in lab_by_cell_num.items():
-        print('Num cells {}'.format(key))
-        precision, recall, f1, _ = precision_recall_fscore_support(value, pred_by_cell_num[key], average='micro')
-        acc = accuracy_score(value, pred_by_cell_num[key])
-        # map_verdict_to_index = {0:'Not enough Information', 1: 'Supported', 2:'Refuted'}
-        class_rep = classification_report(value,pred_by_cell_num[key], output_dict=True)
-        print(class_rep)
-        print(acc, recall, precision, f1)
-        print('-----------------------------------')
 
 def compute_metrics(pred):
     labels = list(itertools.chain(*pred.label_ids))
@@ -88,7 +59,6 @@ def compute_metrics(pred):
     preds = [pred for i, pred in enumerate(preds) if labels[i] != -100]
     labels = [lab for lab in labels if lab != -100]
 
-    score_by_cell_num(pred)
     precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='micro')
     acc = accuracy_score(labels, preds)
     # map_verdict_to_index = {0:'Not enough Information', 1: 'Supported', 2:'Refuted'}
@@ -104,22 +74,22 @@ def compute_metrics(pred):
     }
 
 
-def model_trainer(train_dataset, test_dataset):
+def model_trainer(model_path, train_dataset, test_dataset):
     # model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels =4)
     model = RobertaForTokenClassification.from_pretrained('roberta-base', num_labels = 3, return_dict=True)
 
 
     training_args = TrainingArguments(
-    output_dir='./model_table_to_cell',          # output directory
-    num_train_epochs=2,              # total # of training epochs
+    output_dir=model_path,          # output directory
+    num_train_epochs=3,              # total # of training epochs
     per_device_train_batch_size=16,  # batch size per device during training
     per_device_eval_batch_size=16,   # batch size for evaluation
     # warmup_steps=0,                # number of warmup steps for learning rate scheduler
     weight_decay=0.1,               # strength of weight decay
-    logging_dir='./logs',
+    logging_dir=os.path.join(model_path, 'logs'),
     learning_rate= 5e-5,          # directory for storing logs
-    logging_steps=1400,
-    save_steps = 1400,
+    logging_steps=1000,
+    save_steps = 1000,
     # save_model = './results_table_to_cell2'
     )
 
@@ -192,7 +162,7 @@ def convert_evidence_into_tables(annotation, db):
     for piece in evidence:
         if '_cell_' in piece:
             all_cells.append(piece)
-            all_cells_id.append('_'.join(piece.split('_')[1:]))
+            all_cells_id.append('_'.join(piece.split('_')[(2 if 'header_cell_' in piece else 1):]))
     cell_ids_by_table = {}
     table_by_id = {}
     for i,cell in enumerate(all_cells):
@@ -288,7 +258,7 @@ def claim_hypothesis_only_bias(annotations_train, annotations_dev, args):
     train_dataset = FEVEROUSDataset(text_train, labels_train)
     dev_dataset = FEVEROUSDataset(text_dev, labels_dev)
 
-    trainer, model = model_trainer(train_dataset, dev_dataset)
+    trainer, model = model_trainer(args.model_path, train_dataset, dev_dataset)
     trainer.train()
     scores = trainer.evaluate()
 
@@ -296,11 +266,14 @@ def claim_hypothesis_only_bias(annotations_train, annotations_dev, args):
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_path_train', type=str, help='/path/to/data', default=None)
-    parser.add_argument('--data_path_dev', type=str, help='/path/to/data', default=None)
+    parser.add_argument('--input_path', type=str, help='/path/to/data', default=None)
     parser.add_argument('--wiki_path', type=str)
+    parser.add_argument('--model_path', type=str)
 
     args = parser.parse_args()
+
+    args.data_path_train = os.path.join(args.input_path, 'train.jsonl')
+    args.data_path_dev = os.path.join(args.input_path, 'dev.jsonl')
 
     anno_processor_train =AnnotationProcessor(args.data_path_train)
     anno_processor_dev =AnnotationProcessor(args.data_path_dev)
