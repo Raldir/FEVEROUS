@@ -137,8 +137,20 @@ To predict the verdict given either download our fine-tuned model  [here](https:
  ```
  
 ### Training
-TBA
 
+For training the models, we use the `trainer` by `huggingface`, so for an exhaustive list of hyperparameters to tune check out [their page](https://huggingface.co/transformers/main_classes/trainer.html). The baseline uses mostly default parameters.
+ 
+To train the cell extraction model run:
+```
+PYTHONPATH=src python src/baseline/retriever/train_cell_evidence_retriever.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor --input_path data
+ ```
+The model is saved every n steps, thus specify the correct path during inference accordingly.
+
+To train the verdict prediction model run respectively:
+```
+PYTHONPATH=src python src/baseline/predictor/train_verdict_predictor.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor --input_path data
+```
+ 
 ## Evaluation
 To evaluate your generated predictions locally, simply run the file `evaluate.py` as following:
 ```
