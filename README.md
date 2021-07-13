@@ -147,7 +147,7 @@ PYTHONPATH=src python src/baseline/retriever/train_cell_evidence_retriever.py --
 
 To train the verdict prediction model run respectively:
 ```
-PYTHONPATH=src python src/baseline/predictor/train_verdict_predictor.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor --input_path data
+PYTHONPATH=src python src/baseline/predictor/train_verdict_predictor.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor --input_path data --sample_nei
 ```
 
 The models are saved every n steps, thus specify the correct path during inference accordingly. 
