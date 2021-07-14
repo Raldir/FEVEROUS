@@ -41,9 +41,12 @@ def init_db(wiki_path):
 
 def get_wikipage_by_id(id):
     page = id.split('_')[0]
-    # page = clean_title(page)
+    # page = clean_title(page) legacy function used for old train/dev set. Not needed with current data version.
     page = unicodedata.normalize('NFD', page).strip()
     lines = DB.get_doc_json(page)
+
+    if lines == None:
+        print('Could not find page in database. Please ensure that the title is formatted correctly. If you using an old version (earlier than 04. June 2021, dowload the train and dev splits again and replace them in the directory accordingly.')
     pa = WikiPage(page, lines)
     return pa
 

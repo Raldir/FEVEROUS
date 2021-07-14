@@ -73,7 +73,7 @@ def model_trainer(model_path, train_dataset, test_dataset=None):
 
     training_args = TrainingArguments(
     output_dir=model_path,          # output directory
-    num_train_epochs=3,              # total # of training epochs
+    num_train_epochs=1,              # total # of training epochs
     per_device_train_batch_size=16,  # batch size per device during training
     per_device_eval_batch_size=16,   # batch size for evaluation
     # gradient_accumulation_steps=3,
@@ -82,6 +82,7 @@ def model_trainer(model_path, train_dataset, test_dataset=None):
     logging_dir= os.path.join(model_path, 'logs'),            # directory for storing logs
     logging_steps=1200,
     save_steps = 1200,
+    # learning_rate = 2e-05
     # save_strategy='epoch'
     )
 
@@ -136,6 +137,7 @@ def claim_evidence_predictor(annotations_train, annotations_dev, args):
     # print([anno.get_source() for anno in annotations[:50]])
     # print([anno.get_claim() for anno in annotations[:50]])
     claim_evidence_input = [(prepare_input(anno, 'schlichtkrull', gold=True), anno.get_verdict()) for i,anno in enumerate(tqdm(annotations_train))]
+    # print(claim_evidence_input[0])
 
     # print(claim_evidence_input[:10])
 
