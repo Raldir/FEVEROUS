@@ -123,7 +123,7 @@ Combine both retrieved sentences and tables into one file:
  PYTHONPATH=src python src/baseline/retriever/combine_retrieval.py --data_path data --max_page 5 --max_sent 5 --max_tabs 3 --split dev
  ```
 
-For the next steps, we employ pre-trained transformers. You can either train these themselves (c.f. next section) or download our pre-trained models directly (We recommend training the model yourself as the version used in the paper has not been trained on the full training set). The Cell extraction model can be downloaded [here](https://drive.google.com/file/d/1PKsqwbzVUyWv6guXIUwksBYVARYMkCyU/view?usp=sharing). Extract the model and place it into the folder `models`.  
+For the next steps, we employ pre-trained transformers. You can either train these themselves (c.f. next section) or download our pre-trained models directly that have been used to produce the results from the paper (We recommend training the model yourself as the version used in the paper has not been trained on the full training set). The Cell extraction model can be downloaded [here](https://drive.google.com/file/d/1PKsqwbzVUyWv6guXIUwksBYVARYMkCyU/view?usp=sharing). Extract the model and place it into the folder `models`.  
 
 To extract relevant cells from extracted tables, run:
  ```
