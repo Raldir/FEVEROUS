@@ -34,7 +34,7 @@ if __name__ == "__main__":
         annotations = [annotation for annotation in annotation_processor]
         for i, annotation in enumerate(tqdm(annotations)):
             js = {}
-            js['id'] = annotation.get_id()
+            # js['id'] = annotation.get_id()
             js['claim'] = annotation.get_claim()
             entities = [el[0] for el in annotation.get_claim_entities()]
             entities = [ele for ele in entities if ele in document_titles]

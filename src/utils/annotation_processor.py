@@ -41,7 +41,10 @@ class AnnotationProcessor:
         with jsonlines.open(self.input_path) as f:
              for i,line in enumerate(f.iter()):
                  if i == 0: continue # skip header line
-                 if len(line['evidence'][0]['content']) == 0: continue
+                 # if len(line['evidence'][0]['content']) == 0: continue
+                 if i == 1:
+                     if 'evidence' not in line:
+                         print('No gold evidence found in the input.')
                  try:
                      yield Annotation(line, self.has_content)
                  except:
@@ -62,21 +65,25 @@ class Annotation:
         self.convert_json_to_object(annotation_json)
 
     def convert_json_to_object(self, annotation_json):
-        self.verdict = annotation_json['label'] if 'label' in annotation_json else None
-        self.evidence = [el['content'] for el in annotation_json['evidence']]
-        self.flat_evidence = list(itertools.chain.from_iterable(self.evidence))
-        self.titles = [[el.split('_')[0] for el in set] for set in self.evidence]
-        self.flat_titles =  [el.split('_')[0] for el in self.flat_evidence]
-        # self.flat_evidence = list(map(process_id, list(itertools.chain.from_iterable(self.evidence))))
-        self.context = [el['context'] for el in annotation_json['evidence']]
-        self.flat_context = {}
-        for ele in self.context:
-            self.flat_context.update(ele)
-        # self.flat_context = [set(list(map(process_id, el))) for el in self.flat_context]
-        self.num_evidence = len(self.evidence)
-        self.operations = annotation_json['annotator_operations']
-        self.id = annotation_json['id']
         self.claim = annotation_json['claim']
+        if 'evidence' in annotation_json:
+            self.verdict = annotation_json['label'] if 'label' in annotation_json else None
+            self.evidence = [el['content'] for el in annotation_json['evidence']]
+            self.flat_evidence = list(itertools.chain.from_iterable(self.evidence))
+            self.titles = [[el.split('_')[0] for el in set] for set in self.evidence]
+            self.flat_titles =  [el.split('_')[0] for el in self.flat_evidence]
+            # self.flat_evidence = list(map(process_id, list(itertools.chain.from_iterable(self.evidence))))
+            self.context = [el['context'] for el in annotation_json['evidence']]
+            self.flat_context = {}
+            for ele in self.context:
+                self.flat_context.update(ele)
+            # self.flat_context = [set(list(map(process_id, el))) for el in self.flat_context]
+            self.num_evidence = len(self.evidence)
+            self.operations = annotation_json['annotator_operations']
+            self.id = annotation_json['id']
+        # else:
+        #     print('No gold evidence found in the input.')
+            # self.claim = annotation_json['claim']
         if 'predicted_evidence' in annotation_json:
             self.predicted_evidence = annotation_json['predicted_evidence']
         if 'predicted_verdict' in annotation_json:
