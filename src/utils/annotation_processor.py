@@ -80,6 +80,9 @@ class Annotation:
             # self.flat_context = [set(list(map(process_id, el))) for el in self.flat_context]
             self.num_evidence = len(self.evidence)
             self.operations = annotation_json['annotator_operations']
+        else:
+            self.verdict = 'SUPPORTS' #dummy label
+        if 'id' in annotation_json:
             self.id = annotation_json['id']
         # else:
         #     print('No gold evidence found in the input.')

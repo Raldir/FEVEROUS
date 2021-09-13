@@ -130,7 +130,7 @@ def claim_evidence_predictor(annotations_dev, args):
                  if i == 0:
                      writer.write({'header':''}) # skip header line
                      continue
-                 if len(line['evidence'][0]['content']) == 0: continue
+                 # if len(line['evidence'][0]['content']) == 0: continue
                  line['predicted_label'] = map_verdict_to_index[predictions_map[line['id']]]
                  writer.write(line)
 
@@ -146,7 +146,7 @@ def main():
     args = parser.parse_args()
 
     annotations_dev = None
-    anno_processor_dev = AnnotationProcessor(args.input_path, has_content = True)
+    anno_processor_dev = AnnotationProcessor(args.input_path)#, has_content = True)
     init_db(args.wiki_path)
     annotations_dev = [annotation for annotation in anno_processor_dev]
 

@@ -1,5 +1,6 @@
 #Custom
 feverous_wikiv1.db
+data_backup
 data/
 logs/
 mlruns/

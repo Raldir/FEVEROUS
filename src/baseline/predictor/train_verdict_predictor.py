@@ -68,7 +68,7 @@ def compute_metrics(pred):
 
 
 def model_trainer(model_path, train_dataset, test_dataset=None):
-    model = RobertaForSequenceClassification.from_pretrained('ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli', num_labels =3, return_dict=True)
+    model = RobertaForSequenceClassification.from_pretrained('ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli', num_labels =3, return_dict=True)#ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli
 
 
     training_args = TrainingArguments(
@@ -81,8 +81,8 @@ def model_trainer(model_path, train_dataset, test_dataset=None):
     weight_decay=0.01,               # strength of weight decay
     logging_dir= os.path.join(model_path, 'logs'),            # directory for storing logs
     logging_steps=1200,
-    save_steps = 1200,
-    # learning_rate = 2e-05
+    save_steps = 5900, #1200,
+    learning_rate = 1e-05
     # save_strategy='epoch'
     )
 
