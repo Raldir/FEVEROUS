@@ -14,19 +14,19 @@ Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the F
 
 ## Install Requirements
 
-Create a new Conda environment and install torch: 
+Create a new Conda environment and install torch:
 ```
 conda create -n feverous python=3.8
 conda activate feverous
 conda install pytorch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0 -c pytorch
 ```
-Then install the package requirements specified in `src/requirements.txt`. Then install the English Spacy model `python -m spacy download en_core_web_sm`.
+Then install the package requirements specified in `feverous/requirements.txt`. Then install the English Spacy model `python -m spacy download en_core_web_sm`.
 Code has been tested for `python3.7` and `python3.8`.
 
 ## Prepare Data
 Call the following script to download the FEVEROUS data:
 ```
-./scripts/download_data.sh 
+./scripts/download_data.sh
 ```
 Or you can download the data from the [FEVEROUS dataset page](https://fever.ai/dataset/feverous.html) directly. Namely:
 
@@ -43,7 +43,7 @@ To process annotation files we provide a simple processing script `annotation_pr
 
 ### Read Wikipedia Data
 
-This repository contains elementary code to assist you in reading and processing the provided Wikipedia data. By creating a a `WikiPage` object using the json data of a Wikipedia article, every element of an article is instantiated as a `WikiElement` on top of several utility functions you can then use (e.g. get an **element's context**, get an element by it's annotation id, ...). 
+This repository contains elementary code to assist you in reading and processing the provided Wikipedia data. By creating a a `WikiPage` object using the json data of a Wikipedia article, every element of an article is instantiated as a `WikiElement` on top of several utility functions you can then use (e.g. get an **element's context**, get an element by it's annotation id, ...).
 
 ```python
 from database.feverous_db import FeverousDB
@@ -69,7 +69,7 @@ A `WikiElement` defines/overrides four functions:
 * `id_repr`: Returns a string representation of all ids in that element
 * `__str__`: Returns a string representation of the element's content
 
-`WikiSection` additionally defines a function `get_level` to get the depth level of the section. `WikiTable` and `WikiList` have some additional funcions, explained below. 
+`WikiSection` additionally defines a function `get_level` to get the depth level of the section. `WikiTable` and `WikiList` have some additional funcions, explained below.
 
 ### Reading Tables
 A `WikiTable` object takes a table from the Wikipedia Data and normalizes the table to `column_span=1` and `row_span=1`. It also adds other quality of life features to processing the table or its rows.
@@ -90,7 +90,7 @@ row_representation_same = str(cells_row_0) #or just stringfy the row directly.
 #returns WikiTable from Cell_id. Useful for retrieving associated Tables for cell annotations.
 table_0_cell_dict = wiki_page.get_table_from_cell_id(cells_row_0[0].get_id())
  ```
- 
+
 ### Reading Lists
 ```python
 wiki_lists = wiki_page.get_lists()
@@ -106,51 +106,51 @@ wiki_lists[0].get_list_by_level(0) #returns list elements by level
 ### Retriever
 Our baseline retriever module is a combination of entity matching and TF-IDF using DrQA. We first extract the top $k$ pages by matching extracted entities from the claim with Wikipedia articles. If less than k pages have been identified this way, the remaining pages are selected by Tf-IDF matching between the introductory sentence of an article and the claim. To use TF-IDF matching we need to build a TF-IDF index. Run:
 ```
-PYTHONPATH=src python src/baseline/retriever/build_db.py --db_path data/feverous_wikiv1.db --save_path data/feverous-wiki-docs.db
-PYTHONPATH=src python src/baseline/retriever/build_tfidf.py --db_path data/feverous-wiki-docs.db --out_dir data/index/
+PYTHONPATH=feverous python feverous/baseline/retriever/build_db.py --db_path data/feverous_wikiv1.db --save_path data/feverous-wiki-docs.db
+PYTHONPATH=feverous python feverous/baseline/retriever/build_tfidf.py --db_path data/feverous-wiki-docs.db --out_dir data/index/
  ```
  We can now extract the top k documents:
  ```
-PYTHONPATH=src python src/baseline/retriever/document_entity_tfidf_ir.py  --model data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --db data/feverous-wiki-docs.db --count 5 --split dev --data_path data/
+PYTHONPATH=feverous python feverous/baseline/retriever/document_entity_tfidf_ir.py  --model data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --db data/feverous-wiki-docs.db --count 5 --split dev --data_path data/
  ```
 The top l sentences and q tables of the selected pages are then scored separately using TF-IDF. We set l=5 and q=3.
 ```
-PYTHONPATH=src python src/baseline/retriever/sentence_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_sent 5 --use_precomputed false --data_path data/
-PYTHONPATH=src python src/baseline/retriever/table_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_tabs 3 --use_precomputed false --data_path data/
+PYTHONPATH=feverous python feverous/baseline/retriever/sentence_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_sent 5 --use_precomputed false --data_path data/
+PYTHONPATH=feverous python feverous/baseline/retriever/table_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_tabs 3 --use_precomputed false --data_path data/
  ```
 Combine both retrieved sentences and tables into one file:
  ```
- PYTHONPATH=src python src/baseline/retriever/combine_retrieval.py --data_path data --max_page 5 --max_sent 5 --max_tabs 3 --split dev
+ PYTHONPATH=feverous python feverous/baseline/retriever/combine_retrieval.py --data_path data --max_page 5 --max_sent 5 --max_tabs 3 --split dev
  ```
 
 For the next steps, we employ pre-trained transformers. You can either train these themselves (c.f. next section) or download our pre-trained models directly that have been used to produce the results from the paper (We recommend training the model yourself as the version used in the paper has not been trained on the full training set). The Cell extraction model can be downloaded [here](https://drive.google.com/file/d/1PKsqwbzVUyWv6guXIUwksBYVARYMkCyU/view?usp=sharing). Extract the model and place it into the folder `models`.  
 
 To extract relevant cells from extracted tables, run:
  ```
- PYTHONPATH=src python src/baseline/retriever/predict_cells_from_table.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.jsonl --max_sent 5 --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor
+ PYTHONPATH=feverous python feverous/baseline/retriever/predict_cells_from_table.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.jsonl --max_sent 5 --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor
   ```
- 
+
 ### Verdict Prediction
 To predict the verdict given either download our fine-tuned model  [here](https://drive.google.com/file/d/1E08IO0gU7H4Tod2vriIM3agynIkrscK9/view?usp=sharing) or train it yourself (c.f. Training). Again, we recommend training the model yourself as the model used in the paper has not been trained on the full training set. Then run:
 ```
- PYTHONPATH=src python src/baseline/predictor/evaluate_verdict_predictor.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor
+ PYTHONPATH=feverous python feverous/baseline/predictor/evaluate_verdict_predictor.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor
  ```
- 
+
 ### Training
 
 For training both the cell extraction and verdict prediction models, we use the `trainer` by `huggingface`, thus for an exhaustive list of hyperparameters to tune check out [their page](https://huggingface.co/transformers/main_classes/trainer.html). The baseline uses mostly default hyperparameters.
- 
+
 To train the cell extraction model run:
 ```
-PYTHONPATH=src python src/baseline/retriever/train_cell_evidence_retriever.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor --input_path data
+PYTHONPATH=feverous python feverous/baseline/retriever/train_cell_evidence_retriever.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor --input_path data
  ```
 
 To train the verdict prediction model run respectively:
 ```
-PYTHONPATH=src python src/baseline/predictor/train_verdict_predictor.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor --input_path data --sample_nei
+PYTHONPATH=feverous python feverous/baseline/predictor/train_verdict_predictor.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor --input_path data --sample_nei
 ```
 
-The models are saved every n steps, thus specify the correct path during inference accordingly. 
+The models are saved every n steps, thus specify the correct path during inference accordingly.
 
 ## Evaluation
 To evaluate your generated predictions locally, simply run the file `evaluate.py` as following:

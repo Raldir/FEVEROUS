@@ -20,6 +20,12 @@ from utils.util import *
 from baseline.drqa.tokenizers.spacy_tokenizer import SpacyTokenizer
 TOKENIZER = SpacyTokenizer(annotators=set(['ner']))
 
+from utils.log_helper import LogHelper
+
+LogHelper.setup()
+logger = LogHelper.get_logger(__name__)
+
+
 
 class AnnotationProcessor:
     """
@@ -44,12 +50,12 @@ class AnnotationProcessor:
                  # if len(line['evidence'][0]['content']) == 0: continue
                  if i == 1:
                      if 'evidence' not in line:
-                         print('No gold evidence found in the input.')
+                         logger.info('No gold evidence found in the input.')
                  try:
                      yield Annotation(line, self.has_content)
                  except:
                      traceback.print_exc()
-                     print('Error while processing Annotation {}'.format(line['id']))
+                     logger.error('Error while processing Annotation {}'.format(line['id']))
                      continue
 
 class EvidenceType(Enum):

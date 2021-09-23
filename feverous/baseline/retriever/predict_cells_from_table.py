@@ -242,6 +242,9 @@ def extract_cells_from_tables(annotations, args):
         anno_ids += len(tabs) * [anno.get_id()]
 
 
+    logger.info('Sample entry: {}'.format(all_input[0]))
+    # logger.info('Sample label: {}'.format(all_labels[0]))
+    logger.info('Sample id: {}'.format(anno_ids[0]))
 
     if not args.trivial_baseline:
         tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=True, add_prefix_space=True)

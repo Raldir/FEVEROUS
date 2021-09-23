@@ -24,6 +24,10 @@ import unicodedata
 from urllib.parse import unquote
 import os
 
+from utils.log_helper import LogHelper
+
+LogHelper.setup()
+logger = LogHelper.get_logger(__name__)
 
 from utils.annotation_processor import AnnotationProcessor, EvidenceType
 avail_classes_test = None
@@ -74,14 +78,14 @@ def score_by_cell_num(pred):
             pred_by_cell_num[6] += pred_c
 
     for key, value in lab_by_cell_num.items():
-        print('Num cells {}'.format(key))
+        logger.info('Num cells {}'.format(key))
         precision, recall, f1, _ = precision_recall_fscore_support(value, pred_by_cell_num[key], average='micro')
         acc = accuracy_score(value, pred_by_cell_num[key])
         # map_verdict_to_index = {0:'Not enough Information', 1: 'Supported', 2:'Refuted'}
         class_rep = classification_report(value,pred_by_cell_num[key], output_dict=True)
-        print(class_rep)
-        print(acc, recall, precision, f1)
-        print('-----------------------------------')
+        logger.info(class_rep)
+        logger.info(acc, recall, precision, f1)
+        logger.info('-----------------------------------')
 
 def compute_metrics(pred):
     labels = list(itertools.chain(*pred.label_ids))
@@ -95,8 +99,8 @@ def compute_metrics(pred):
     acc = accuracy_score(labels, preds)
     # map_verdict_to_index = {0:'Not enough Information', 1: 'Supported', 2:'Refuted'}
     class_rep = classification_report(labels, preds, output_dict=True)
-    print(class_rep)
-    print(acc, recall, precision, f1)
+    logger.info(class_rep)
+    logger.info(acc, recall, precision, f1)
     return {
         'accuracy': acc,
         'f1': f1,

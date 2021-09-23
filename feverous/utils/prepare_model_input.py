@@ -7,6 +7,11 @@ from cleantext import clean
 import unicodedata
 from urllib.parse import unquote
 
+from utils.log_helper import LogHelper
+
+LogHelper.setup()
+logger = LogHelper.get_logger(__name__)
+
 DB = None
 
 
@@ -46,7 +51,7 @@ def get_wikipage_by_id(id):
     lines = DB.get_doc_json(page)
 
     if lines == None:
-        print('Could not find page in database. Please ensure that the title is formatted correctly. If you using an old version (earlier than 04. June 2021, dowload the train and dev splits again and replace them in the directory accordingly.')
+        logger.info('Could not find page in database. Please ensure that the title is formatted correctly. If you using an old version (earlier than 04. June 2021, dowload the train and dev splits again and replace them in the directory accordingly.')
     pa = WikiPage(page, lines)
     return pa
 
@@ -63,7 +68,7 @@ def get_evidence_text_by_id(id, wikipage):
         if id in wikipage.get_page_items(): #Filters annotations that are not in the most recent Wikidump (due to additionally removed pages)
             content =  str(wikipage.get_page_items()[id])
         else:
-            print('Evidence text: {} in {} not found.'.format(id, id_org))
+            logger.info('Evidence text: {} in {} not found.'.format(id, id_org))
             content = ''
     return content
 
