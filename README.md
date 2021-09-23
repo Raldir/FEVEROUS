@@ -9,6 +9,7 @@ Unstructured and Structured information](https://arxiv.org/pdf/2106.05707.pdf).
 Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the FEVER Workshop 2021 shared task @EMNLP on FEVEROUS.
 
 ## Change Log
+* **14 Sep 2021** - Baseline updated: cell extractor and verdict prediction model trained on entire dataset
 * **07 June 2021** - Release of the full training data and bug-fixed development split
 * **20 May 2021** - Release of the first training data batch and the development split
 
@@ -123,7 +124,7 @@ Combine both retrieved sentences and tables into one file:
  PYTHONPATH=feverous python feverous/baseline/retriever/combine_retrieval.py --data_path data --max_page 5 --max_sent 5 --max_tabs 3 --split dev
  ```
 
-For the next steps, we employ pre-trained transformers. You can either train these themselves (c.f. next section) or download our pre-trained models directly that have been used to produce the results from the paper (We recommend training the model yourself as the version used in the paper has not been trained on the full training set). The Cell extraction model can be downloaded [here](https://drive.google.com/file/d/1PKsqwbzVUyWv6guXIUwksBYVARYMkCyU/view?usp=sharing). Extract the model and place it into the folder `models`.  
+For the next steps, we employ pre-trained transformers. You can either train these themselves (c.f. next section) or download our pre-trained models directly that have been used to produce the results from the paper. The Cell extraction model can be downloaded [here](https://drive.google.com/file/d/1Zu3RUFzThPpsSkBhlYc0CBoRpIRxauGR/view?usp=sharing). Extract the model and place it into the folder `models`.  
 
 To extract relevant cells from extracted tables, run:
  ```
@@ -131,7 +132,7 @@ To extract relevant cells from extracted tables, run:
   ```
 
 ### Verdict Prediction
-To predict the verdict given either download our fine-tuned model  [here](https://drive.google.com/file/d/1E08IO0gU7H4Tod2vriIM3agynIkrscK9/view?usp=sharing) or train it yourself (c.f. Training). Again, we recommend training the model yourself as the model used in the paper has not been trained on the full training set. Then run:
+To predict the verdict given either download our fine-tuned model  [here](https://drive.google.com/file/d/1SoxeTDp2NETbZdMpEle_QO8Cw0oxgUbV/view?usp=sharing) or train it yourself (c.f. Training). Then run:
 ```
  PYTHONPATH=feverous python feverous/baseline/predictor/evaluate_verdict_predictor.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor
  ```
