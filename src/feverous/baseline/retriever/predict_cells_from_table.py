@@ -163,8 +163,8 @@ def convert_evidence_into_tables_gold(annotation, db):
     return (output_tables, output_tables_ids, output_labels)
 
 def convert_evidence_into_tables(annotation, db, args):
-    predicted_sentences= [ele[0] + '_sentence_' + ele[1].split('_')[1] for ele in annotation.predicted_evidence[:args.max_sent]]
-    predicted_tables =  [ele[0] + '_table_' + ele[1].split('_')[1] for ele in annotation.predicted_evidence[args.max_sent:]]
+    predicted_sentences= [ele[0] + '_sentence_' + ele[1].split('_')[1] for ele in annotation.predicted_evidence  if ele[1].split('_')[0] == 'sentence']
+    predicted_tables =  [ele[0] + '_table_' + ele[1].split('_')[1] for ele in annotation.predicted_evidence if ele[1].split('_')[0] == 'table']
     evidence = set(list(predicted_sentences[:3] + predicted_tables[:2]))
     tables = [ele for ele in evidence if '_table_' in ele]
     output_tables = []
@@ -242,6 +242,9 @@ def extract_cells_from_tables(annotations, args):
         anno_ids += len(tabs) * [anno.get_id()]
 
 
+    logger.info('Sample entry: {}'.format(all_input[0]))
+    # logger.info('Sample label: {}'.format(all_labels[0]))
+    logger.info('Sample id: {}'.format(anno_ids[0]))
 
     if not args.trivial_baseline:
         tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=True, add_prefix_space=True)
@@ -282,9 +285,9 @@ def extract_cells_from_tables(annotations, args):
                  if i == 0:
                      writer.write({'header':''}) # skip header line
                      continue
-                 if len(line['evidence'][0]['content']) == 0: continue
-                 predicted_sentences= [ele[0] + '_sentence_' + ele[1].split('_')[1] for ele in line['predicted_evidence'][:args.max_sent]]
-                 predicted_tables =  [ele[0] + '_table_' + ele[1].split('_')[1] for ele in line['predicted_evidence'][args.max_sent:]]
+                 # if len(line['evidence'][0]['content']) == 0: continue
+                 predicted_sentences= [ele[0] + '_sentence_' + ele[1].split('_')[1] for ele in line['predicted_evidence'] if ele[1].split('_')[0] == 'sentence']
+                 predicted_tables =  [ele[0] + '_table_' + ele[1].split('_')[1] for ele in line['predicted_evidence']  if ele[1].split('_')[0] == 'table' ]
                  line['predicted_evidence'] = set(list(predicted_sentences + predicted_tables))
                  if not args.trivial_baseline:
                      line['predicted_evidence'] = [ele for ele in line['predicted_evidence'] if ('_table_' not in ele and '_table_caption_' not in ele)]

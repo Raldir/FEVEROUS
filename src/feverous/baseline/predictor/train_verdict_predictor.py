@@ -21,6 +21,10 @@ import os
 
 from utils.prepare_model_input import prepare_input, init_db
 
+from utils.log_helper import LogHelper
+
+LogHelper.setup()
+logger = LogHelper.get_logger(__name__)
 
 class FEVEROUSDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels, use_labels = True):
@@ -55,8 +59,8 @@ def compute_metrics(pred):
     precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='micro')
     acc = accuracy_score(labels, preds)
     class_rep = classification_report(labels, preds, target_names= ['NOT ENOUGH INFO', 'SUPPORTS', 'REFUTES'], output_dict=True)
-    print(class_rep)
-    print(acc, recall, precision, f1)
+    logger.info(class_rep)
+    logger.info(acc, recall, precision, f1)
     return {
         'accuracy': acc,
         'f1': f1,
@@ -68,7 +72,7 @@ def compute_metrics(pred):
 
 
 def model_trainer(model_path, train_dataset, test_dataset=None):
-    model = RobertaForSequenceClassification.from_pretrained('ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli', num_labels =3, return_dict=True)
+    model = RobertaForSequenceClassification.from_pretrained('ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli', num_labels =3, return_dict=True)#ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli
 
 
     training_args = TrainingArguments(
@@ -81,8 +85,8 @@ def model_trainer(model_path, train_dataset, test_dataset=None):
     weight_decay=0.01,               # strength of weight decay
     logging_dir= os.path.join(model_path, 'logs'),            # directory for storing logs
     logging_steps=1200,
-    save_steps = 1200,
-    # learning_rate = 2e-05
+    save_steps = 5900, #1200,
+    learning_rate = 1e-05
     # save_strategy='epoch'
     )
 
@@ -126,7 +130,7 @@ def sample_nei_instances(annotations):
                 additional_instances.append(anno_new)
 
 
-    print('Added additional {} NEI instances'. format(len(additional_instances)))
+    logger.info('Added additional {} NEI instances'. format(len(additional_instances)))
     annotations +=additional_instances
     return annotations
 
@@ -161,7 +165,7 @@ def claim_evidence_predictor(annotations_train, annotations_dev, args):
     trainer, model = model_trainer(args.model_path, train_dataset, test_dataset)
     trainer.train()
     scores = trainer.evaluate()
-    print(scores['eval_class_rep'])
+    logger.info(scores['eval_class_rep'])
 
 def main():
 

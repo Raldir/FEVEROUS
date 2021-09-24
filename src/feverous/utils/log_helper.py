@@ -9,7 +9,7 @@ class LogHelper():
         LogHelper.handler.setLevel(logging.DEBUG)
         LogHelper.handler.setFormatter(logging.Formatter(FORMAT))
 
-        LogHelper.get_logger(LogHelper.__name__).info("Log Helper set up")
+        #LogHelper.get_logger(LogHelper.__name__).info("Log Helper set up")
 
     @staticmethod
     def get_logger(name,level=logging.DEBUG):

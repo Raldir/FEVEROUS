@@ -15,6 +15,11 @@ import unicodedata
 from utils.util import *
 from utils.wiki_page import WikiPage
 
+from utils.log_helper import LogHelper
+
+LogHelper.setup()
+logger = LogHelper.get_logger(__name__)
+
 class WikiDataProcessor:
     def __init__(self, input_path, condition = None, filter = None, mode = None):
         """
@@ -93,7 +98,7 @@ class WikiDataProcessor:
             file, line = list(self.title_to_json_map[title])
         except Exception:
             traceback.print_exc()
-            print('Title', title)
+            logger.info('Title', title)
             return None
         line_json = json.loads(linecache.getline(file, line + 1))
         return WikiPage(line_json['title'], line_json)
@@ -113,11 +118,11 @@ class WikiDataProcessor:
                  for i,line in enumerate(f.iter()):
                      title = line['title']
                      if title in self.titles:
-                         print('hmmm')
+                         logger.info('Title already in titles. Unexpected behavior occured. Please consider reporting this issue at https://github.com/Raldir/FEVEROUS')
                          # continue
                      if len(line.keys()) <= 2:
-                         print(line)
-                         print('Not 2 keys???')
+                         logger.info(line)
+                         logger.info('Not 2 keys??? Unexpected behavior occured. Please consider reporting this issue at https://github.com/Raldir/FEVEROUS')
                          continue
                      self.titles.add(title)
                      yield(title, line)
