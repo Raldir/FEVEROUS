@@ -1,5 +1,15 @@
 # Fact Extraction and VERification Over Unstructured and Structured information
 
+<p align="center">
+    <a href="https://github.com/Raldir/FEVEROUS/blob/main/LICENSE">
+        <img alt="GitHub" src="https://img.shields.io/github/license/Raldir/FEVEROUS">
+    </a>
+    <a href="https://pypi.org/project/feverous/">
+        <img alt="GitHub release" src="https://img.shields.io/pypi/v/feverous">
+    </a>
+</p>
+
+
 This repository maintains the code of the annotation platform, generating and preparing the dataset, as well as the baseline described in the paper: [FEVEROUS: Fact Extraction and VERification Over
 Unstructured and Structured information](https://arxiv.org/pdf/2106.05707.pdf).
 
