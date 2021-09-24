@@ -1,4 +1,5 @@
 from setuptools import find_packages, setup
+
 import pathlib
 
 
@@ -10,7 +11,6 @@ README = (HERE / "README.md").read_text()
 
 # Dependencies required to use your package
 with open('src/feverous/requirements.txt', 'r') as fh:
-
     INSTALL_REQS = [l.strip() for l in fh.readlines() if l.strip()]
 
 

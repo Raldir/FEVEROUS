@@ -6,6 +6,7 @@ Unstructured and Structured information](https://arxiv.org/pdf/2106.05707.pdf).
 > Fact verification has attracted a lot of attention in the machine learning and natural language processing communities, as it is one of the key methods for detecting misinformation. Existing large-scale benchmarks for this task have focused mostly on textual sources, i.e. unstructured information, and thus ignored the wealth of information available in structured formats, such as tables. In this paper we introduce a novel dataset and benchmark, Fact Extraction and VERification Over Unstructured and Structured information (FEVEROUS), which consists of 87,026 verified claims. Each claim is annotated with evidence in the form of sentences and/or cells from tables in Wikipedia, as well as a label indicating whether this evidence supports, refutes, or does not provide enough information to reach a verdict. Furthermore, we detail our efforts to track and minimize the biases present in the dataset and could be exploited by models, e.g. being able to predict the label without using evidence. Finally, we develop a baseline for verifying claims against text and tables which predicts both the correct evidence and verdict for 18% of the claims.
 
 ## Shared Task
+
 Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the FEVER Workshop 2021 shared task @EMNLP on FEVEROUS.
 
 ## Change Log
@@ -18,19 +19,34 @@ Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the F
 ## Install Requirements
 
 Create a new Conda environment and install torch:
+
 ```bash
 conda create -n feverous python=3.8
 conda activate feverous
 conda install pytorch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0 -c pytorch
 ```
+
+or with pip
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install torch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0
+pip install .
+```
+
 Then install the package requirements specified in `src/feverous/requirements.txt`. Then install the English Spacy model `python -m spacy download en_core_web_sm`.
+
 Code has been tested for `python3.7` and `python3.8`.
 
 ## Prepare Data
+
 Call the following script to download the FEVEROUS data:
+
 ```bash
 ./scripts/download_data.sh
 ```
+
 Or you can download the data from the [FEVEROUS dataset page](https://fever.ai/dataset/feverous.html) directly. Namely:
 
 * Training Data
@@ -65,9 +81,11 @@ next_elements = wiki_page.get_next_k_elements('sentence_5', k=4) #Gets Wiki elem
 ```
 
 ### WikiElement
+
 There are five different types of `WikiElement`: `WikiSentence`, `WikiTable`, `WikiList`, `WikiSection`, and `WikiTitle`.
 
 A `WikiElement` defines/overrides four functions:
+
 * `get_ids`: Returns list of all ids in that element
 * `get_id`: Return the specific id of that element
 * `id_repr`: Returns a string representation of all ids in that element
@@ -76,6 +94,7 @@ A `WikiElement` defines/overrides four functions:
 `WikiSection` additionally defines a function `get_level` to get the depth level of the section. `WikiTable` and `WikiList` have some additional funcions, explained below.
 
 ### Reading Tables
+
 A `WikiTable` object takes a table from the Wikipedia Data and normalizes the table to `column_span=1` and `row_span=1`. It also adds other quality of life features to processing the table or its rows.
 
 ```python
@@ -96,6 +115,7 @@ table_0_cell_dict = wiki_page.get_table_from_cell_id(cells_row_0[0].get_id())
  ```
 
 ### Reading Lists
+
 ```python
 wiki_lists = wiki_page.get_lists()
 wiki_lists_0 = wiki_lists[0]
@@ -109,20 +129,25 @@ wiki_lists[0].get_list_by_level(0) #returns list elements by level
 
 ### Retriever
 Our baseline retriever module is a combination of entity matching and TF-IDF using DrQA. We first extract the top $k$ pages by matching extracted entities from the claim with Wikipedia articles. If less than k pages have been identified this way, the remaining pages are selected by Tf-IDF matching between the introductory sentence of an article and the claim. To use TF-IDF matching we need to build a TF-IDF index. Run:
+
 ```bash
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/build_db.py --db_path data/feverous_wikiv1.db --save_path data/feverous-wiki-docs.db
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/build_tfidf.py --db_path data/feverous-wiki-docs.db --out_dir data/index/
  ```
  We can now extract the top k documents:
+ 
  ```bash
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/document_entity_tfidf_ir.py  --model data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --db data/feverous-wiki-docs.db --count 5 --split dev --data_path data/
  ```
 The top l sentences and q tables of the selected pages are then scored separately using TF-IDF. We set l=5 and q=3.
+
 ```bash
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/sentence_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_sent 5 --use_precomputed false --data_path data/
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/table_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_tabs 3 --use_precomputed false --data_path data/
  ```
+ 
 Combine both retrieved sentences and tables into one file:
+ 
  ```bash
  PYTHONPATH=src/feverous python src/feverous/baseline/retriever/combine_retrieval.py --data_path data --max_page 5 --max_sent 5 --max_tabs 3 --split dev
  ```
@@ -145,6 +170,7 @@ To predict the verdict given either download our fine-tuned model  [here](https:
 For training both the cell extraction and verdict prediction models, we use the `trainer` by `huggingface`, thus for an exhaustive list of hyperparameters to tune check out [their page](https://huggingface.co/transformers/main_classes/trainer.html). The baseline uses mostly default hyperparameters.
 
 To train the cell extraction model run:
+
 ```bash
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/train_cell_evidence_retriever.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor --input_path data
  ```
@@ -157,13 +183,17 @@ PYTHONPATH=src/feverous python src/feverous/baseline/predictor/train_verdict_pre
 The models are saved every n steps, thus specify the correct path during inference accordingly.
 
 ## Evaluation
+
 To evaluate your generated predictions locally, simply run the file `evaluate.py` as following:
+
 ```bash
 python src/feverous/evaluation/evaluate.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.cells.verdict.jsonl
  ```
+ 
 Note that any input file needs to define the fields `label`, `predicted_label`, `evidence`, and `predicted_evidence` in the format specified in the file `feverous_scorer`.
 
 ## Shared Task submission
+
 Submission for the FEVER Workshop 2021 Shared Task are done on the EvalAI platform: https://eval.ai/web/challenges/challenge-page/1091/.
 Before the release of the testing data on the **24. of July** you can submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used.
 
