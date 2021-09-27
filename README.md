@@ -28,6 +28,12 @@ Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the F
 
 ## Install Requirements
 
+The package can be installed and run using conda or pip (plain python).
+
+Code has been tested for `python3.7` and `python3.8`.
+
+### Install with Conda
+
 Create a new Conda environment and install torch:
 
 ```bash
@@ -36,22 +42,28 @@ conda activate feverous
 conda install pytorch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0 -c pytorch
 ```
 
-or with pip
+Then install the package requirements specified in `src/feverous/requirements.txt`.
+Then install the English Spacy model `python -m spacy download en_core_web_sm`.
+
+### Install with Pip
+
+Set up a virtual environment and run the install via pip
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install torch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0
 pip install .
 ```
 
-Then install the package requirements specified in `src/feverous/requirements.txt`. Then install the English Spacy model `python -m spacy download en_core_web_sm`.
+Then install the English Spacy model (skip this step if running with snakemake)
 
-Code has been tested for `python3.7` and `python3.8`.
+```bash
+python -m spacy download en_core_web_sm
+```
 
 ## Prepare Data
 
-Call the following script to download the FEVEROUS data:
+Call the following script to download the FEVEROUS data (skip if running with snakemake):
 
 ```bash
 ./scripts/download_data.sh
@@ -135,45 +147,77 @@ print(str(wiki_lists_0))
 wiki_lists[0].get_list_by_level(0) #returns list elements by level
  ```
 
-## Baseline
+## Baseline Model
+
+## Run with Snakemake
+
+The entire set of commands used below in this README can also be run with snakemake. This will assume that you wish to download the pre-trained cell extraction and verdict prediction models. If you would like to train them yourself, see the instructions lower down. Snakemake will skip downloading them if the files already exist in the models directory.
+
+Assuming you have followed the pip install instructions above, simply
+
+source your virtual environment
+
+```bash
+source venv/bin/activate
+```
+
+install snakemake and gdown (to download the pre-trained models)
+
+```bash
+pip install snakemake gdown
+```
+
+and run
+
+```bash
+snakemake -j 1
+```
+
+## Run Without Snakemake
 
 ### Retriever
+
 Our baseline retriever module is a combination of entity matching and TF-IDF using DrQA. We first extract the top $k$ pages by matching extracted entities from the claim with Wikipedia articles. If less than k pages have been identified this way, the remaining pages are selected by Tf-IDF matching between the introductory sentence of an article and the claim. To use TF-IDF matching we need to build a TF-IDF index. Run:
 
 ```bash
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/build_db.py --db_path data/feverous_wikiv1.db --save_path data/feverous-wiki-docs.db
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/build_tfidf.py --db_path data/feverous-wiki-docs.db --out_dir data/index/
- ```
- We can now extract the top k documents:
- 
- ```bash
+```
+
+We can now extract the top k documents:
+
+```bash
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/document_entity_tfidf_ir.py  --model data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --db data/feverous-wiki-docs.db --count 5 --split dev --data_path data/
- ```
+```
+
 The top l sentences and q tables of the selected pages are then scored separately using TF-IDF. We set l=5 and q=3.
 
 ```bash
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/sentence_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_sent 5 --use_precomputed false --data_path data/
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/table_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_tabs 3 --use_precomputed false --data_path data/
- ```
- 
-Combine both retrieved sentences and tables into one file:
- 
- ```bash
- PYTHONPATH=src/feverous python src/feverous/baseline/retriever/combine_retrieval.py --data_path data --max_page 5 --max_sent 5 --max_tabs 3 --split dev
- ```
+```
 
-For the next steps, we employ pre-trained transformers. You can either train these themselves (c.f. next section) or download our pre-trained models directly that have been used to produce the results from the paper. The Cell extraction model can be downloaded [here](https://drive.google.com/file/d/1Zu3RUFzThPpsSkBhlYc0CBoRpIRxauGR/view?usp=sharing). Extract the model and place it into the folder `models`.  
+Combine both retrieved sentences and tables into one file:
+
+```bash
+PYTHONPATH=src/feverous python src/feverous/baseline/retriever/combine_retrieval.py --data_path data --max_page 5 --max_sent 5 --max_tabs 3 --split dev
+```
+
+For the next steps, we employ pre-trained transformers. You can either train these themselves (c.f. next section) or download our pre-trained models directly that have been used to produce the results from the paper. The Cell extraction model can be downloaded [here](https://drive.google.com/file/d/1Zu3RUFzThPpsSkBhlYc0CBoRpIRxauGR/view?usp=sharing). Extract the model and place it into the folder `models`.
 
 To extract relevant cells from extracted tables, run:
- ```bash
- PYTHONPATH=src/feverous python src/feverous/baseline/retriever/predict_cells_from_table.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.jsonl --max_sent 5 --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor
-  ```
+
+```bash
+PYTHONPATH=src/feverous python src/feverous/baseline/retriever/predict_cells_from_table.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.jsonl --max_sent 5 --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor
+```
 
 ### Verdict Prediction
+
 To predict the verdict given either download our fine-tuned model  [here](https://drive.google.com/file/d/1SoxeTDp2NETbZdMpEle_QO8Cw0oxgUbV/view?usp=sharing) or train it yourself (c.f. Training). Then run:
+
 ```bash
- PYTHONPATH=src/feverous python src/feverous/baseline/predictor/evaluate_verdict_predictor.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor
- ```
+PYTHONPATH=src/feverous python src/feverous/baseline/predictor/evaluate_verdict_predictor.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor
+```
 
 ### Training
 
@@ -183,9 +227,10 @@ To train the cell extraction model run:
 
 ```bash
 PYTHONPATH=src/feverous python src/feverous/baseline/retriever/train_cell_evidence_retriever.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor --input_path data
- ```
+```
 
 To train the verdict prediction model run respectively:
+
 ```bash
 PYTHONPATH=src/feverous python src/feverous/baseline/predictor/train_verdict_predictor.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor --input_path data --sample_nei
 ```
@@ -198,8 +243,8 @@ To evaluate your generated predictions locally, simply run the file `evaluate.py
 
 ```bash
 python src/feverous/evaluation/evaluate.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.cells.verdict.jsonl
- ```
- 
+```
+
 Note that any input file needs to define the fields `label`, `predicted_label`, `evidence`, and `predicted_evidence` in the format specified in the file `feverous_scorer`.
 
 ## Shared Task submission
