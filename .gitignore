@@ -1,9 +1,15 @@
 #Custom
 feverous_wikiv1.db
+data_backup
+src/baseline/retriever/eval_combined_retriever.py
+src/baseline/retriever/eval_doc_retriever.py
+src/baseline/retriever/eval_sentence_retriever.py
+src/baseline/retriever/eval_tab_retriever.py
 data/
 logs/
 mlruns/
 models/
+.snakemake/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -134,3 +140,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+venv*

@@ -1,0 +1,4 @@
+exclude src/feverous/baseline/retriever/eval_combined_retriever.py
+exclude src/feverous/baseline/retriever/eval_sentence_retriever.py
+exclude src/feverous/baseline/retriever/eval_tab_retriever.py
+exclude src/feverous/baseline/retriever/eval_doc_retriever.py

@@ -58,8 +58,8 @@ def compute_metrics(pred):
     precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='micro')
     acc = accuracy_score(labels, preds)
     class_rep = classification_report(labels, preds, target_names= ['NOT ENOUGH INFO', 'SUPPORTS', 'REFUTES'], output_dict=True)
-    print(class_rep)
-    print(acc, recall, precision, f1)
+    logger.info(class_rep)
+    logger.info("Acc: {}, Recall: {}, Precision: {}, F1: {}".format(acc, recall, precision, f1))
     return {
         'accuracy': acc,
         'f1': f1,
@@ -107,6 +107,8 @@ def claim_evidence_predictor(annotations_dev, args):
 
     claim_evidence_input_test = [(prepare_input(anno, 'schlichtkrull'), anno.get_verdict()) for anno in tqdm(annotations_dev)]
 
+    logger.info("Sample instance {}".format(claim_evidence_input_test[0][0]))
+
 
     text_test, labels_test = process_data(claim_evidence_input_test)
 
@@ -123,14 +125,13 @@ def claim_evidence_predictor(annotations_dev, args):
 
     map_verdict_to_index = {0:'NOT ENOUGH INFO', 1:'SUPPORTS', 2:'REFUTES'}
 
-
     with jsonlines.open(os.path.join(args.input_path.split('.jsonl')[0] + '.verdict.jsonl'), 'w') as writer:
         with jsonlines.open(os.path.join(args.input_path)) as f:
              for i,line in enumerate(f.iter()):
                  if i == 0:
                      writer.write({'header':''}) # skip header line
                      continue
-                 if len(line['evidence'][0]['content']) == 0: continue
+                 # if len(line['evidence'][0]['content']) == 0: continue
                  line['predicted_label'] = map_verdict_to_index[predictions_map[line['id']]]
                  writer.write(line)
 
@@ -146,9 +147,9 @@ def main():
     args = parser.parse_args()
 
     annotations_dev = None
-    anno_processor_dev = AnnotationProcessor(args.input_path, has_content = True)
+    anno_processor_dev = AnnotationProcessor(args.input_path)#, has_content = True)
     init_db(args.wiki_path)
-    annotations_dev = [annotation for annotation in anno_processor_dev]
+    annotations_dev = [annotation for annotation in anno_processor_dev][:20]
 
     logger.info('Start predicting verdicts...')
     claim_evidence_predictor(annotations_dev, args)
