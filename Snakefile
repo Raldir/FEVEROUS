@@ -49,7 +49,7 @@ rule extract_verdict_predictor:
 
 rule download_spacy_model:
     log: "logs/download_spacy_model.log"
-    shell: "python -m spacy download en_core_web_sm > {log}"
+    shell: PYTHON_EXE + " -m spacy download en_core_web_sm > {log}"
 
 
 rule download_data:
