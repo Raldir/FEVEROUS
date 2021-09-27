@@ -1,7 +1,7 @@
 import argparse
 import json
 from tqdm import tqdm
-from utils.annotation_processor import AnnotationProcessor
+from feverous.utils.annotation_processor import AnnotationProcessor
 import unicodedata
 from cleantext import clean
 from urllib.parse import unquote

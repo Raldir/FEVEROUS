@@ -16,11 +16,11 @@ import importlib.util
 
 from multiprocessing import Pool as ProcessPool
 from tqdm import tqdm
-from baseline.drqa.retriever import utils
-from utils.log_helper import LogHelper
-from utils.wiki_page import WikiPage
+from feverous.baseline.drqa.retriever import utils
+from feverous.utils.log_helper import LogHelper
+from feverous.utils.wiki_page import WikiPage
 from multiprocessing.pool import Pool
-from database.feverous_db import FeverousDB
+from feverous.database.feverous_db import FeverousDB
 
 LogHelper.setup()
 logger = LogHelper.get_logger("DrQA BuildDB")

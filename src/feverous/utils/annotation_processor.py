@@ -16,11 +16,12 @@ import html
 import re
 from enum import Enum
 
-from utils.util import *
-from baseline.drqa.tokenizers.spacy_tokenizer import SpacyTokenizer
+from feverous.utils.util import *
+from feverous.baseline.drqa.tokenizers.spacy_tokenizer import SpacyTokenizer
+
 TOKENIZER = SpacyTokenizer(annotators=set(['ner']))
 
-from utils.log_helper import LogHelper
+from feverous.utils.log_helper import LogHelper
 
 LogHelper.setup()
 logger = LogHelper.get_logger(__name__)

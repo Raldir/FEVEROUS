@@ -11,11 +11,10 @@ import linecache
 import html
 import re
 
-from utils.util import process_text, WikiElement
+from feverous.utils.util import process_text, WikiElement
 
 
 class WikiTable(WikiElement):
-
     def __init__(self, name, table_json, page):
         self.name = name
         self.page = page

@@ -2,15 +2,15 @@ import argparse
 import json
 from multiprocessing.pool import ThreadPool
 
-from baseline.drqa.retriever import utils
-from utils.log_helper import LogHelper
+from feverous.baseline.drqa.retriever import utils
+from feverous.utils.log_helper import LogHelper
 from tqdm import tqdm
 import numpy as np
 
-from baseline.drqascripts.build_tfidf_lines import OnlineTfidfDocRanker
-from baseline.drqa.retriever.doc_db import DocDB
-from utils.wiki_page import WikiPage
-from utils.util import JSONLineReader
+from feverous.baseline.drqascripts.build_tfidf_lines import OnlineTfidfDocRanker
+from feverous.baseline.drqa.retriever.doc_db import DocDB
+from feverous.utils.wiki_page import WikiPage
+from feverous.utils.util import JSONLineReader
 import unicodedata
 
 

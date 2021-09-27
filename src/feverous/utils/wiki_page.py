@@ -11,11 +11,11 @@ import linecache
 import html
 import re
 
-from utils.wiki_list import WikiList
-from utils.wiki_section import WikiSection
-from utils.wiki_sentence import WikiSentence
-from utils.wiki_table import WikiTable
-from utils.util import *
+from feverous.utils.wiki_list import WikiList
+from feverous.utils.wiki_section import WikiSection
+from feverous.utils.wiki_sentence import WikiSentence
+from feverous.utils.wiki_table import WikiTable
+from feverous.utils.util import *
 
 from urllib.parse import unquote
 from cleantext import clean

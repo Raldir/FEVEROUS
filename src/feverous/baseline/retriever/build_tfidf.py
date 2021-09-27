@@ -10,7 +10,7 @@
 """A script to build the tf-idf document matrices for retrieval."""
 
 import os
-from baseline.drqascripts.build_tfidf import *
+from feverous.baseline.drqascripts.build_tfidf import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

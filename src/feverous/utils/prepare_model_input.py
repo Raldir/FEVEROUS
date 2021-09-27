@@ -1,5 +1,5 @@
-from database.feverous_db import FeverousDB
-from utils.wiki_page import WikiPage
+from feverous.database.feverous_db import FeverousDB
+from feverous.utils.wiki_page import WikiPage
 import jsonlines
 import json
 import unicodedata
@@ -7,7 +7,7 @@ from cleantext import clean
 import unicodedata
 from urllib.parse import unquote
 
-from utils.log_helper import LogHelper
+from feverous.utils.log_helper import LogHelper
 
 LogHelper.setup()
 logger = LogHelper.get_logger(__name__)

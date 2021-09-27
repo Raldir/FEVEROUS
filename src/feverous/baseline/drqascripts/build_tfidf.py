@@ -18,8 +18,8 @@ from multiprocessing.util import Finalize
 from functools import partial
 from collections import Counter
 
-from baseline.drqa import retriever
-from baseline.drqa import tokenizers
+from feverous.baseline.drqa import retriever
+from feverous.baseline.drqa import tokenizers
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

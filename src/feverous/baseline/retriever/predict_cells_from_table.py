@@ -21,10 +21,10 @@ from cleantext import clean
 from urllib.parse import unquote
 import torch
 
-from utils.annotation_processor import AnnotationProcessor, EvidenceType
-from utils.wiki_page import WikiPage, get_wikipage_by_id
-from database.feverous_db import FeverousDB
-from utils.log_helper import LogHelper
+from feverous.utils.annotation_processor import AnnotationProcessor, EvidenceType
+from feverous.utils.wiki_page import WikiPage, get_wikipage_by_id
+from feverous.database.feverous_db import FeverousDB
+from feverous.utils.log_helper import LogHelper
 
 LogHelper.setup()
 logger = LogHelper.get_logger(__name__)

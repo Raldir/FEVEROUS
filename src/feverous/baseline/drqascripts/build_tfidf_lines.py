@@ -10,9 +10,13 @@ import argparse
 import math
 import logging
 
-from baseline.drqa.retriever import TfidfDocRanker
-from baseline.drqa import tokenizers
-from baseline.drqascripts.build_tfidf import get_count_matrix, get_tfidf_matrix, get_doc_freqs
+from feverous.baseline.drqa.retriever import TfidfDocRanker
+from feverous.baseline.drqa import tokenizers
+from feverous.baseline.drqascripts.build_tfidf import (
+    get_count_matrix,
+    get_tfidf_matrix,
+    get_doc_freqs,
+)
 
 logger = logging.getLogger()
 

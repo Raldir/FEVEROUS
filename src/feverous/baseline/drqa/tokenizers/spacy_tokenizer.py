@@ -11,7 +11,7 @@ Requires spaCy package and the spaCy english model.
 
 import spacy
 import copy
-from baseline.drqa.tokenizers.tokenizer import Tokens, Tokenizer
+from feverous.baseline.drqa.tokenizers.tokenizer import Tokens, Tokenizer
 
 
 class SpacyTokenizer(Tokenizer):

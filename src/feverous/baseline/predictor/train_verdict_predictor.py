@@ -16,12 +16,12 @@ import itertools
 import random
 import copy
 from tqdm import tqdm
-from utils.annotation_processor import AnnotationProcessor, EvidenceType
+from feverous.utils.annotation_processor import AnnotationProcessor, EvidenceType
 import os
 
-from utils.prepare_model_input import prepare_input, init_db
+from feverous.utils.prepare_model_input import prepare_input, init_db
 
-from utils.log_helper import LogHelper
+from feverous.utils.log_helper import LogHelper
 
 LogHelper.setup()
 logger = LogHelper.get_logger(__name__)

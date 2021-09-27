@@ -11,7 +11,8 @@ import linecache
 import html
 import re
 
-from utils.util import process_text, WikiElement
+from feverous.utils.util import process_text, WikiElement
+
 
 class WikiSentence(WikiElement):
     def __init__(self, name, sentence, page):

@@ -6,8 +6,8 @@ from collections import Counter
 from transformers import BertForSequenceClassification, Trainer, TrainingArguments, AdamW, RobertaForTokenClassification, RobertaTokenizer, AutoTokenizer
 from transformers.modeling_outputs import SequenceClassifierOutput
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, classification_report
-from utils.wiki_page import WikiPage
-from database.feverous_db import FeverousDB
+from feverous.utils.wiki_page import WikiPage
+from feverous.database.feverous_db import FeverousDB
 import unicodedata
 from sklearn.model_selection import train_test_split
 import torch
@@ -24,12 +24,13 @@ import unicodedata
 from urllib.parse import unquote
 import os
 
-from utils.log_helper import LogHelper
+from feverous.utils.log_helper import LogHelper
 
 LogHelper.setup()
 logger = LogHelper.get_logger(__name__)
 
-from utils.annotation_processor import AnnotationProcessor, EvidenceType
+from feverous.utils.annotation_processor import AnnotationProcessor, EvidenceType
+
 avail_classes_test = None
 
 class FEVEROUSDataset(torch.utils.data.Dataset):

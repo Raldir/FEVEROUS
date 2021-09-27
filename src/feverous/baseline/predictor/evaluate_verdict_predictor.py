@@ -18,10 +18,10 @@ import random
 import copy
 from tqdm import tqdm
 import os
-from utils.log_helper import LogHelper
+from feverous.utils.log_helper import LogHelper
 
-from utils.annotation_processor import AnnotationProcessor, EvidenceType
-from utils.prepare_model_input import prepare_input, init_db
+from feverous.utils.annotation_processor import AnnotationProcessor, EvidenceType
+from feverous.utils.prepare_model_input import prepare_input, init_db
 
 LogHelper.setup()
 logger = LogHelper.get_logger(__name__)

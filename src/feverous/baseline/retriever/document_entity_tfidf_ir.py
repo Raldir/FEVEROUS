@@ -1,11 +1,12 @@
 import argparse
 import json
 from tqdm import tqdm
-from baseline.drqa import retriever
-from baseline.drqa.retriever import DocDB
-from utils.annotation_processor import AnnotationProcessor
-from utils.wiki_processor import WikiDataProcessor
-from baseline.drqa.retriever.doc_db import DocDB
+from feverous.baseline.drqa import retriever
+from feverous.baseline.drqa.retriever import DocDB
+from feverous.utils.annotation_processor import AnnotationProcessor
+from feverous.utils.wiki_processor import WikiDataProcessor
+from feverous.baseline.drqa.retriever.doc_db import DocDB
+
 
 def process(ranker, query, k=1):
     doc_names, doc_scores = ranker.closest_docs(query, k)

@@ -11,7 +11,7 @@ import linecache
 import html
 import re
 
-from utils.util import process_text, WikiElement
+from feverous.utils.util import process_text, WikiElement
 
 class WikiList(WikiElement):
 

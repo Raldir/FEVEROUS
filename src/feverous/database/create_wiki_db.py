@@ -1,7 +1,7 @@
 import sqlite3
 import argparse
 import os
-from utils.wiki_processor import WikiDataProcessor
+from feverous.utils.wiki_processor import WikiDataProcessor
 import json
 from tqdm import tqdm
 import unicodedata
