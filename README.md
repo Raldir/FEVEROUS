@@ -153,6 +153,8 @@ wiki_lists[0].get_list_by_level(0) #returns list elements by level
 
 The entire set of commands used below in this README can also be run with snakemake. This will assume that you wish to download the pre-trained cell extraction and verdict prediction models. If you would like to train them yourself, see the instructions lower down. Snakemake will skip downloading them if the files already exist in the models directory.
 
+![snakemake DAG](./snakemake_dag.png)
+
 Assuming you have followed the pip install instructions above, simply
 
 source your virtual environment
