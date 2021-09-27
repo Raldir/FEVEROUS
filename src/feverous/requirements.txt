@@ -1,6 +1,6 @@
 regex==2020.10.23
 numpy==1.19.1
-transformers==4.1.1
+transformers==4.10.2
 scipy==1.5.4
 clean-text==0.4.0
 pexpect==4.8.0
@@ -8,3 +8,6 @@ spacy==2.3.2
 sklearn
 jsonlines==2.0.0
 tqdm==4.46.0
+torch==1.7.0
+torchvision==0.8.0
+torchaudio==0.7.0
