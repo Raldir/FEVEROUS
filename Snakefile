@@ -140,7 +140,7 @@ rule extract_table_cells:
         db=rules.download_data.output.wiki
     output: "data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl"
     params:
-        model=lambda w, input: os.path.dirname(input.model)
+        model=lambda w, input: os.path.dirname(input.model[0])
     resources:
         time_limit=MAX_TIME,
         mem_mb=DEFAULT_MEMORY_MB,
@@ -155,7 +155,7 @@ rule evaluate_predictor:
         db=rules.download_data.output.wiki
     output: "data/dev.combined.not_precomputed.p5.s5.t3.cells.verdict.jsonl"
     params:
-        model=lambda w, input: os.path.dirname(input.model)
+        model=lambda w, input: os.path.dirname(input.model[0])
     resources:
         time_limit=MAX_TIME,
         mem_mb=DEFAULT_MEMORY_MB,
