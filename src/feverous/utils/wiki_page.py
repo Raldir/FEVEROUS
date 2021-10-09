@@ -192,6 +192,14 @@ class WikiPage:
     def get_sentences(self):
         return [ele for key,ele in self.page_items.items() if  key.startswith('sentence_')]
 
+    #Added get_sentences_ids
+    def get_sentences_ids(self):
+        return [key for key,ele in self.page_items.items() if  key.startswith('sentence_')]
+
+    #Added get_page_order
+    def get_page_order(self):
+        return self.page_order
+        
     def get_cells(self):
         return [ele for key,ele in self.page_items.items() if  key.startswith('cell_')]
 
