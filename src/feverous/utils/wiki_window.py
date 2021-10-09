@@ -37,7 +37,7 @@ class wiki_window:
             w_id = "window_"+section_id+"_0"
             windows[w_id] = sentences_ids[0:min(self.window_size, len(sentences_ids))]
             for i in range(1,len(sentences_ids)-self.window_size+1, self.step):
-                w_id = "window_"+section_id+"_" + str(len(windows))
+                w_id = "window_"+section_id+"_" + str(i)
                 windows[w_id] = sentences_ids[i:i+self.window_size]
         return windows
     
@@ -52,8 +52,11 @@ class wiki_window:
             sentences_content.append(self.page.get_element_by_id(sen_id).__str__())
         #sentences present in same section will have same context 
         #so calculating context once will do the work
-        context = self.page.get_context(sentences[0])
-        content_and_context = context + " " + " ".join(sentences_content)
+        context_elem = self.page.get_context(sentences[0])
+        context = []
+        for el in context_elem:
+            context.append(el.content)
+        content_and_context = " ".join(context) + " " + " ".join(sentences_content)
         return content_and_context
 
     def get_all_windows(self):
