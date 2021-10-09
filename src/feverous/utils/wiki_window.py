@@ -55,3 +55,6 @@ class wiki_window:
         context = self.page.get_context(sentences[0])
         content_and_context = context + " " + " ".join(sentences_content)
         return content_and_context
+
+    def get_all_windows(self):
+        return self.windows
