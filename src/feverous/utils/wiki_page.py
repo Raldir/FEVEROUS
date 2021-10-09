@@ -182,6 +182,10 @@ class WikiPage:
 
     def get_tables(self):
         return [ele for key,ele in self.page_items.items() if key.startswith('table_')]
+    
+    #Added get_table_ids
+    def get_table_ids(self):
+        return [key for key,ele in self.page_items.items() if key.startswith('table_')]
 
     def get_lists(self):
         return [ele for key,ele in self.page_items.items() if  key.startswith('list_')]
