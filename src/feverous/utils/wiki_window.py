@@ -34,10 +34,10 @@ class wiki_window:
             sentences_ids = self.sections[section_id]
             if len(sentences_ids) == 0:
                 continue
-            w_id = "window_"+section_id+"_0"
+            w_id = self.page.title.name + "|window_"+section_id+"_0"
             windows[w_id] = sentences_ids[0:min(self.window_size, len(sentences_ids))]
             for i in range(1,len(sentences_ids)-self.window_size+1, self.step):
-                w_id = "window_"+section_id+"_" + str(i)
+                w_id = self.page.title.name + "|window_"+section_id+"_" + str(i)
                 windows[w_id] = sentences_ids[i:i+self.window_size]
         return windows
     
