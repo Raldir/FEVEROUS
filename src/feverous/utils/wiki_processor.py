@@ -12,10 +12,10 @@ import html
 import re
 import unicodedata
 
-from utils.util import *
-from utils.wiki_page import WikiPage
+from .util import *
+from .wiki_page import WikiPage
 
-from utils.log_helper import LogHelper
+from .log_helper import LogHelper
 
 LogHelper.setup()
 logger = LogHelper.get_logger(__name__)

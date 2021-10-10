@@ -11,11 +11,11 @@ import linecache
 import html
 import re
 
-from utils.wiki_list import WikiList
-from utils.wiki_section import WikiSection
-from utils.wiki_sentence import WikiSentence
-from utils.wiki_table import WikiTable
-from utils.util import *
+from .wiki_list import WikiList
+from .wiki_section import WikiSection
+from .wiki_sentence import WikiSentence
+from .wiki_table import WikiTable
+from .util import *
 
 from urllib.parse import unquote
 from cleantext import clean
@@ -123,7 +123,20 @@ class WikiPage:
         self.page_order = [el for el in dict['order'] if el in self.page_items]
 
     def get_element_by_id(self, id):
+        if id.startswith("cell_") or id.startswith("header_cell_"):
+            return self.get_cell_by_id(id)
         return self.page_items[id] if id in self.page_items else None
+
+    #Added get_cell_by_id
+    def get_cell_by_id(self, id):
+        table_id = None
+        if(id.startswith("header_")):
+            table_id = "table_" + id.split("_")[2]
+        else:
+            table_id = "table_" + id.split("_")[1]
+        table_obj = self.get_element_by_id(table_id)
+        return table_obj.get_cell(id)
+        
 
     def get_previous_k_elements(self, element_id, k=1):
         element_position = self.page_order.index(element_id)
