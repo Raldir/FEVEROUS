@@ -1,4 +1,8 @@
 # Fact Extraction and VERification Over Unstructured and Structured information
+Top generate dense index
+    PYTHONPATH=src python index/index_gen.py --page_ids_path /mnt/infonas/data/harshiitb/MTP/MTP/data/page_ids.pkl --db_path /mnt/infonas/data/harshiitb/MTP/MTP/FEVER/FEVEROUS-main/data/feverous_wikiv1.db
+
+
 
 <p align="center">
     <a href="https://github.com/Raldir/FEVEROUS/blob/main/LICENSE">
