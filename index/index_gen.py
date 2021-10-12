@@ -46,7 +46,7 @@ def build_index(model_args, worker_page_ids, db_path):
             for entity in entities:
                 if entity not in worker_index.keys():
                     worker_index[entity] = []
-                worker_index[entity].append(window_id)
+                worker_index[entity].append("window_"+window_id)
         #Index all rows in the page
         row_obj = wiki_row(wiki_page)
         all_rows = row_obj.get_all_rows()
