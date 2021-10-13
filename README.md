@@ -10,7 +10,7 @@
 </p>
 
 
-This repository maintains the code of the annotation platform, generating and preparing the dataset, as well as the baseline described in the paper: [FEVEROUS: Fact Extraction and VERification Over
+This repository maintains the code of the annotation platform, generating and preparing the dataset, as well as the baseline described in the NeurIPS 2021 Dataset and Benchmark paper: [FEVEROUS: Fact Extraction and VERification Over
 Unstructured and Structured information](https://arxiv.org/pdf/2106.05707.pdf).
 
 > Fact verification has attracted a lot of attention in the machine learning and natural language processing communities, as it is one of the key methods for detecting misinformation. Existing large-scale benchmarks for this task have focused mostly on textual sources, i.e. unstructured information, and thus ignored the wealth of information available in structured formats, such as tables. In this paper we introduce a novel dataset and benchmark, Fact Extraction and VERification Over Unstructured and Structured information (FEVEROUS), which consists of 87,026 verified claims. Each claim is annotated with evidence in the form of sentences and/or cells from tables in Wikipedia, as well as a label indicating whether this evidence supports, refutes, or does not provide enough information to reach a verdict. Furthermore, we detail our efforts to track and minimize the biases present in the dataset and could be exploited by models, e.g. being able to predict the label without using evidence. Finally, we develop a baseline for verifying claims against text and tables which predicts both the correct evidence and verdict for 18% of the claims.
