@@ -13,7 +13,7 @@ import blink.main_dense as blink_main_dense
 import elq.main_dense as elq_main_dense
 import blink.ner as NER
 from tqdm import tqdm
-
+import os
 import torch
 
 
@@ -100,15 +100,16 @@ def build_index(worker_page_ids, db_path, models_path, lock, id):
             for w_id in all_window_ids:
                 for _ in range(per_window_ent_density[w_id]):
                     try:
-                        worker_index[predictions[index][0]].append(w_id)
+                        worker_index[predictions[index][0]].append("window_"+w_id)
                     except KeyError:
                         worker_index[predictions[index][0]] = []
-                        worker_index[predictions[index][0]].append(w_id)
+                        worker_index[predictions[index][0]].append("window_"+w_id)
                     index += 1
         except Exception as e:
             not_indexed += 1
 
     lock.acquire()
+    print("Thread",i,"has total",not_indexed,"exceptions",sep=" ")
     worker_output.append(worker_index)
     lock.release()
     pass
@@ -129,7 +130,6 @@ if __name__=="__main__":
     batch_size = 1000 // args.num_threads
     threads = []
 
-    torch.cuda.set_device(1)
 
     models_path = args.model_path
     global worker_output
