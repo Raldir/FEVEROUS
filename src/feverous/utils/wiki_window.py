@@ -61,3 +61,9 @@ class wiki_window:
 
     def get_all_windows(self):
         return self.windows
+    
+    def get_all_content_context(self):
+        result = []
+        for w_id in self.windows:
+            result.append(self.get_window_content_and_context(w_id))
+        return result

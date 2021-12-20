@@ -56,9 +56,7 @@ class wiki_row:
         table_context = None
         cell_content_context = []
         cell_ids = self.row_ids[row_id]
-        print(cell_ids)
         for cell_id in cell_ids:
-            print(cell_id)
             cell_obj = self.page.get_element_by_id(cell_id)
             content = cell_obj.content
             context = " ".join([el.content for el in self.get_col_headers(cell_id, table_id)])
