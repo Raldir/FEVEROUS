@@ -14,6 +14,9 @@ import elq.main_dense as elq_main_dense
 import blink.ner as NER
 from tqdm import tqdm
 
+import torch
+
+
 def get_page_ids(page_ids_path, db_path):
     my_file = Path(page_ids_path)
     if my_file.is_file():
@@ -33,6 +36,7 @@ def get_page_ids(page_ids_path, db_path):
 def build_index(worker_page_ids, db_path, models_path, lock, id):
     print("Thread",i, "started", sep=" ")
     global worker_output
+    not_indexed = 0
     #BLINK Model Initialization
     print("Thread",i, "loading BLINK model", sep=" ")
     blink_config = {
@@ -52,26 +56,27 @@ def build_index(worker_page_ids, db_path, models_path, lock, id):
     blink_model_args = argparse.Namespace(**blink_config)
     blink_model = blink_main_dense.load_models(blink_model_args, logger=None)
     ner_model = NER.get_model()
+    print("Thread",i, "Done loading BLINK model", sep=" ")
     #ELQ model initialization
-    print("Thread",i, "loading ELQ model", sep=" ")
-    elq_config = {
-        "interactive": False,
-        "biencoder_model": models_path+"elq_wiki_large.bin",
-        "biencoder_config": models_path+"elq_large_params.txt",
-        "cand_token_ids_path": models_path+"entity_token_ids_128.t7",
-        "entity_catalogue": models_path+"entity.jsonl",
-        "entity_encoding": models_path+"all_entities_large.t7",
-        "output_path": "logs/", # logging directory
-        "faiss_index": "hnsw",
-        "index_path": models_path+"faiss_hnsw_index.pkl",
-        "num_cand_mentions": 10,
-        "num_cand_entities": 10,
-        "threshold_type": "joint",
-        "threshold": -4.5,
-    }
+    # print("Thread",i, "loading ELQ model", sep=" ")
+    # elq_config = {
+    #     "interactive": False,
+    #     "biencoder_model": models_path+"elq_wiki_large.bin",
+    #     "biencoder_config": models_path+"elq_large_params.txt",
+    #     "cand_token_ids_path": models_path+"entity_token_ids_128.t7",
+    #     "entity_catalogue": models_path+"entity.jsonl",
+    #     "entity_encoding": models_path+"all_entities_large.t7",
+    #     "output_path": "logs/", # logging directory
+    #     "faiss_index": "hnsw",
+    #     "index_path": models_path+"faiss_hnsw_index.pkl",
+    #     "num_cand_mentions": 10,
+    #     "num_cand_entities": 10,
+    #     "threshold_type": "joint",
+    #     "threshold": -4.5,
+    # }
 
-    elq_args = argparse.Namespace(**elq_config)
-    elq_model = elq_main_dense.load_models(elq_args, logger=None)
+    # elq_args = argparse.Namespace(**elq_config)
+    # elq_model = elq_main_dense.load_models(elq_args, logger=None)
 
     db =  FeverousDB(db_path)
     worker_index = {}
@@ -80,37 +85,29 @@ def build_index(worker_page_ids, db_path, models_path, lock, id):
         wiki_page = WikiPage(page_id, page_json)
         #Index all windows in the page
         window_obj = wiki_window(wiki_page)
-        all_windows = window_obj.get_all_windows()
-        entity_density = dict.fromkeys(all_windows, 0)
+        all_window_ids = window_obj.get_all_windows()
         all_windows_content_context = window_obj.get_all_content_context()
-        
-        for window_id in all_windows.keys():
-            text = window_obj.get_window_content_and_context(window_id)
-            annotated = blink_main_dense._annotate(ner_model,[text])
-            if len(annotated)>0:
-                _, _, _, _, _, predictions, _, = blink_main_dense.run(blink_model_args, None, *blink_model, test_data=annotated)
-                entities = [pred_ents[0] for pred_ents in predictions]
-                for entity in entities:
-                    if entity not in worker_index.keys():
-                        worker_index[entity] = []
-                    worker_index[entity].append("window_"+window_id)
-        #Index all rows in the page
-        row_obj = wiki_row(wiki_page)
-        all_rows = row_obj.get_all_rows()
-        for row_id in all_rows.keys():
-            text = row_obj.get_row_content_and_context(row_id)
-            #Use here ELQ
-            data_to_link = [{
-                                "id": 0,
-                                "text": text.lower(),
-                            },
-                            ]
-            predictions = elq_main_dense.run(elq_args, None, *elq_model, test_data=data_to_link)
-            entities = [ent[0] for ent in predictions[0]["pred_tuples_string"]]
-            for entity in entities:
-                if entity not in worker_index.keys():
-                    worker_index[entity] = []
-                worker_index[entity].append("row_"+row_id)
+        per_window_ent_density = dict.fromkeys(all_window_ids, 0)
+        annotated = blink_main_dense._annotate(ner_model,all_windows_content_context)
+        index_to_wid = {}
+        for w_id in all_window_ids:
+            index_to_wid[len(index_to_wid)] = w_id
+        for ent in annotated:
+            per_window_ent_density[index_to_wid[ent["sent_idx"]]] += 1
+        try:
+            _, _, _, _, _, predictions, _, = blink_main_dense.run(blink_model_args, None, *blink_model, test_data=annotated)
+            index = 0
+            for w_id in all_window_ids:
+                for _ in range(per_window_ent_density[w_id]):
+                    try:
+                        worker_index[predictions[index][0]].append(w_id)
+                    except KeyError:
+                        worker_index[predictions[index][0]] = []
+                        worker_index[predictions[index][0]].append(w_id)
+                    index += 1
+        except Exception as e:
+            not_indexed += 1
+
     lock.acquire()
     worker_output.append(worker_index)
     lock.release()
@@ -129,8 +126,10 @@ if __name__=="__main__":
     page_ids = get_page_ids(args.page_ids_path, args.db_path)[1:]
     print("Page_ids calculated!")
     
-    batch_size = len(page_ids) // args.num_threads
+    batch_size = 1000 // args.num_threads
     threads = []
+
+    torch.cuda.set_device(1)
 
     models_path = args.model_path
     global worker_output
@@ -140,7 +139,7 @@ if __name__=="__main__":
     print("Creating threads....")
     for i in range(args.num_threads):
         threads.append(threading.Thread(target=build_index , args=(
-                        page_ids[i*batch_size:min((i+1)*batch_size, len(page_ids))],
+                        page_ids[i*batch_size:min((i+1)*batch_size, 1000)],
                         args.db_path,
                         args.model_path,
                         lock,
