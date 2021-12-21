@@ -111,3 +111,9 @@ class wiki_row:
 
     def get_all_rows(self):
         return self.row_ids
+
+    def get_all_content_context(self):
+        result = []
+        for row_id in self.row_ids:
+            result.append(self.get_row_content_and_context(row_id))
+        return result

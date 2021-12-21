@@ -85,25 +85,35 @@ def build_index(worker_page_ids, db_path, models_path, lock, id):
         wiki_page = WikiPage(page_id, page_json)
         #Index all windows in the page
         window_obj = wiki_window(wiki_page)
+        row_obj = wiki_row(wiki_page)
         all_window_ids = window_obj.get_all_windows()
-        all_windows_content_context = window_obj.get_all_content_context()
-        per_window_ent_density = dict.fromkeys(all_window_ids, 0)
-        annotated = blink_main_dense._annotate(ner_model,all_windows_content_context)
-        index_to_wid = {}
-        for w_id in all_window_ids:
-            index_to_wid[len(index_to_wid)] = w_id
+        all_row_ids = row_obj.get_all_rows()
+        all_evidence_content_context = []
+        all_evidence_content_context.extend(window_obj.get_all_content_context())
+        all_evidence_content_context.extend(row_obj.get_all_content_context())
+        evidence_ids = []
+        for id in all_window_ids:
+            evidence_ids.append("window_"+id)
+        for id in all_row_ids:
+            evidence_ids.append("row_"+id)
+        
+        per_evidence_ent_density = dict.fromkeys(evidence_ids, 0)
+        annotated = blink_main_dense._annotate(ner_model,all_evidence_content_context)
+        index_to_id = {}
+        for id in evidence_ids:
+            index_to_id[len(index_to_id)] = id
         for ent in annotated:
-            per_window_ent_density[index_to_wid[ent["sent_idx"]]] += 1
+            per_evidence_ent_density[index_to_id[ent["sent_idx"]]] += 1
         try:
             _, _, _, _, _, predictions, _, = blink_main_dense.run(blink_model_args, None, *blink_model, test_data=annotated)
             index = 0
-            for w_id in all_window_ids:
-                for _ in range(per_window_ent_density[w_id]):
+            for id in evidence_ids:
+                for _ in range(per_evidence_ent_density[id]):
                     try:
-                        worker_index[predictions[index][0]].append("window_"+w_id)
+                        worker_index[predictions[index][0]].append(id)
                     except KeyError:
                         worker_index[predictions[index][0]] = []
-                        worker_index[predictions[index][0]].append("window_"+w_id)
+                        worker_index[predictions[index][0]].append(id)
                     index += 1
         except Exception as e:
             not_indexed += 1
@@ -127,7 +137,7 @@ if __name__=="__main__":
     page_ids = get_page_ids(args.page_ids_path, args.db_path)[1:]
     print("Page_ids calculated!")
     
-    batch_size = 1000 // args.num_threads
+    batch_size = 10 // args.num_threads
     threads = []
 
 
@@ -139,7 +149,7 @@ if __name__=="__main__":
     print("Creating threads....")
     for i in range(args.num_threads):
         threads.append(threading.Thread(target=build_index , args=(
-                        page_ids[i*batch_size:min((i+1)*batch_size, 1000)],
+                        page_ids[i*batch_size:min((i+1)*batch_size, 10)],
                         args.db_path,
                         args.model_path,
                         lock,
