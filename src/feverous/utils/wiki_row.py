@@ -15,7 +15,7 @@ class wiki_row:
             table_obj = self.page.get_element_by_id(table_id)
             rows = table_obj.get_rows()
             for row_obj in rows:
-                row_id = self.page.title.content + "|"+ table_obj.get_id() + "_ " + str(row_obj.row_num)
+                row_id = self.page.title.content + "|"+ table_obj.get_id() + "_" + str(row_obj.row_num)
                 row_ids[row_id] = row_obj.get_ids()
         return row_ids
     
@@ -70,7 +70,7 @@ class wiki_row:
             table_caption_context.append(el.content)
         table_context = " ".join(table_caption_context) + " " + table_caption
         content_context = table_context + " ".join(cell_content_context)
-        return content_context
+        return re.sub(r"\[\[([a-z,A-Z,'_',' ','!','(',')','\"','*',0-9,'-','/','\\']*)\|([a-z,A-Z,'_',' ','!','(',')','\"','*',0-9,'-','/','\\']*)\]\]", r'"\2"', content_context)
 
     def get_row_graph(self, row_id):
         table_id = "_".join(row_id.split('|')[1].split('_')[:2])
@@ -110,7 +110,7 @@ class wiki_row:
         return (Nodes, edge_list)
 
     def get_all_rows(self):
-        return self.row_ids
+        return self.row_ids.keys()
 
     def get_all_content_context(self):
         result = []
