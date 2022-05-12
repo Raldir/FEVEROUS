@@ -69,7 +69,7 @@ After downloading the data, unpack the Wikipedia data into the same folder (i.e.
 
 ### Read Annotation Data
 
-To process annotation files we provide a simple processing script `annotation_processor.py`. The script currently does not support the use of annotator operations.
+To process annotation files we provide a simple processing script `annotation_processor.py`.
 
 ### Read Wikipedia Data
 
