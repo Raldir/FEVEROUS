@@ -1,10 +1,10 @@
-regex==2020.10.23
-numpy==1.19.1
-transformers==4.1.1
-scipy==1.5.4
-clean-text==0.4.0
-pexpect==4.8.0
-spacy==2.3.2
-sklearn
-jsonlines==2.0.0
-tqdm==4.46.0
+regex>=2020.10.23, <= 2022.10.31
+numpy>=1.19.1, <= 1.21.6
+transformers>=4.1.1, <= 4.26.1
+scipy>=1.5.4, <= 1.73
+clean-text>=0.4.0, <= 0.6.0
+pexpect<=4.8.0
+spacy>=2.3.2, <= 3.5.0
+scikit-learn<=1.0.2
+jsonlines>=2.0.0, <= 3.1.0
+tqdm>=4.46.0, <= 4.64.1
