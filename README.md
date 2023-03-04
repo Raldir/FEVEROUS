@@ -20,9 +20,14 @@ Unstructured and Structured information](https://arxiv.org/pdf/2106.05707.pdf).
 Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the FEVER Workshop 2021 shared task @EMNLP on FEVEROUS.
 
 ## Change Log
+* **6 March 2023** - Compatibility updates and refactoring code of reading Wikipedia and running the baseline for increased accessibility.
 * **24 Sep 2021** - The Feverous repository is now also accessible through PyPI. Install it using `python -m pip install feverous`.
+* **24 Sep 2021** - The Feverous repository is now also accessible through PyPI. Install it using `python -m pip install feverous`.
+* **Nov 2021** - FEVEROUS Shared Task Description paper is now [online](https://aclanthology.org/2021.fever-1.1.pdf). Congratulations to all participating teams!
 * **20 Sep 2021** - Added verification challenge fields to the dataset and description to the paper.
 * **14 Sep 2021** - Baseline updated: cell extractor and verdict prediction model trained on entire dataset
+* **27 July 2021** - Submissions to the FEVEROUS Shared Task are closed. Everyone is still welcome to submit to the Post-Competition Leaderboard. 
+* **24 July 2021** - Submissions to the FEVEROUS Shared Task are now open.
 * **07 June 2021** - Release of the full training data and bug-fixed development split
 * **20 May 2021** - Release of the first training data batch and the development split
 
@@ -67,10 +72,6 @@ After downloading the data, unpack the Wikipedia data into the same folder (i.e.
 
 ## Reading Data
 
-### Read Annotation Data
-
-To process annotation files we provide a simple processing script `annotation_processor.py`.
-
 ### Read Wikipedia Data
 
 This repository contains elementary code to assist you in reading and processing the provided Wikipedia data. By creating a a `WikiPage` object using the json data of a Wikipedia article, every element of an article is instantiated as a `WikiElement` on top of several utility functions you can then use (e.g. get an **element's context**, get an element by it's annotation id, ...).
@@ -86,8 +87,8 @@ wiki_page = WikiPage("Anarchism", page_json)
 
 context_sentence_14 = wiki_page.get_context('sentence_14') # Returns list of context Wiki elements
 
-prev_elements = wiki_page.get_previous_k_elements('sentence_5', k=4) #Gets Wiki element before sentence_5
-next_elements = wiki_page.get_next_k_elements('sentence_5', k=4) #Gets Wiki element after sentence_5
+prev_elements = wiki_page.get_previous_k_elements('sentence_5', k=4) # Gets Wiki element before sentence_5
+next_elements = wiki_page.get_next_k_elements('sentence_5', k=4) # Gets Wiki element after sentence_5
 ```
 
 ### WikiElement
@@ -110,15 +111,15 @@ A `WikiTable` object takes a table from the Wikipedia Data and normalizes the ta
 ```python
 wiki_tables = wiki_page.get_tables() #return list of all Wiki Tables
 
-wiki_table_0 = wiki_tables[0]
-wiki_table_0_rows = wiki_table_0.get_rows() #return list of WikiRows
-wiki_table_0_header_rows = wiki_table_0.get_header_rows() #return list of WikiRows that are headers
-is_header_row = wiki_table_0_rows[0].is_header_row() #or check the row directly whether it is a header
+wiki_table_0 = wiki_tables[0] # Select the first table on the Wikipedia article
+wiki_table_0_rows = wiki_table_0.get_rows() # return list of WikiRows
+wiki_table_0_header_rows = wiki_table_0.get_header_rows() # return list of WikiRows that are headers
+is_header_row = wiki_table_0_rows[0].is_header_row() # or check the row directly whether it is a header
 
 
-cells_row_0 = wiki_table_0_rows[0].get_row_cells()#return list with WikiCells for row 0
-row_representation = '|'.join([str(cell) for cell in cells_row_0]) #get cell content seperated by vertical line
-row_representation_same = str(cells_row_0) #or just stringfy the row directly.
+cells_row_0 = wiki_table_0_rows[0].get_row_cells() # return list with WikiCells for row 0
+row_representation = '|'.join([str(cell) for cell in cells_row_0]) # get cell content seperated by vertical line
+row_representation_same = str(cells_row_0) # or just stringfy the row directly.
 
 #returns WikiTable from Cell_id. Useful for retrieving associated Tables for cell annotations.
 table_0_cell_dict = wiki_page.get_table_from_cell_id(cells_row_0[0].get_id())
@@ -129,7 +130,7 @@ table_0_cell_dict = wiki_page.get_table_from_cell_id(cells_row_0[0].get_id())
 ```python
 wiki_lists = wiki_page.get_lists()
 wiki_lists_0 = wiki_lists[0]
-#String representation: Prefixes '-' for unsorted elements and enumerations (1., 2. ...) for sorted elements
+# String representation: Prefixes '-' for unsorted elements and enumerations (1., 2. ...) for sorted elements
 print(str(wiki_lists_0))
 
 wiki_lists[0].get_list_by_level(0) #returns list elements by level
@@ -137,60 +138,24 @@ wiki_lists[0].get_list_by_level(0) #returns list elements by level
 
 ## Baseline
 
-### Retriever
-Our baseline retriever module is a combination of entity matching and TF-IDF using DrQA. We first extract the top $k$ pages by matching extracted entities from the claim with Wikipedia articles. If less than k pages have been identified this way, the remaining pages are selected by Tf-IDF matching between the introductory sentence of an article and the claim. To use TF-IDF matching we need to build a TF-IDF index. Run:
+Our baseline retriever module consists of following steps:
 
-```bash
-PYTHONPATH=src/feverous python src/feverous/baseline/retriever/build_db.py --db_path data/feverous_wikiv1.db --save_path data/feverous-wiki-docs.db
-PYTHONPATH=src/feverous python src/feverous/baseline/retriever/build_tfidf.py --db_path data/feverous-wiki-docs.db --out_dir data/index/
- ```
- We can now extract the top k documents:
- 
+1. Bulding a TF-IDF index for retrieval using Wikipedia's introductory sections (using DrQA).
+2. Select evidence documents using a combination of entity matching and TF-IDF using DrQA.
+3. Rerank the sentences and tables within the selected documents, keeping the top l sentences and q tables. Sentences and Tables are socred separately using TF-IDF. We set l=5 and q=3 in the paper. 
+4. Select relevant cells from tables using a fine-tuned transformer, treating the task as a sequence labelling problem. The Cell extraction model as used to preduce the results in our paper can be downloaded [here](https://drive.google.com/file/d/1Zu3RUFzThPpsSkBhlYc0CBoRpIRxauGR/view?usp=sharing). Extract the model and place it into the folder `models`.  
+5. Predict the claim's veracity via the retrieved sentence and table/cell evidence, using a fine-tuned transformer. You can download our fine-tuned model [here](https://drive.google.com/file/d/1SoxeTDp2NETbZdMpEle_QO8Cw0oxgUbV/view?usp=sharing).
+
+To run the baseline, you can either execute each individual step manually (see `baseline/README`) or simply execute:
+
  ```bash
-PYTHONPATH=src/feverous python src/feverous/baseline/retriever/document_entity_tfidf_ir.py  --model data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz --db data/feverous-wiki-docs.db --count 5 --split dev --data_path data/
- ```
-The top l sentences and q tables of the selected pages are then scored separately using TF-IDF. We set l=5 and q=3.
 
-```bash
-PYTHONPATH=src/feverous python src/feverous/baseline/retriever/sentence_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_sent 5 --use_precomputed false --data_path data/
-PYTHONPATH=src/feverous python src/feverous/baseline/retriever/table_tfidf_drqa.py --db data/feverous_wikiv1.db --split dev --max_page 5 --max_tabs 3 --use_precomputed false --data_path data/
- ```
- 
-Combine both retrieved sentences and tables into one file:
- 
- ```bash
- PYTHONPATH=src/feverous python src/feverous/baseline/retriever/combine_retrieval.py --data_path data --max_page 5 --max_sent 5 --max_tabs 3 --split dev
- ```
+ python3 examples/baseline.py --split dev --doc_count 5 --sent_count 5 --tab_count 3 --config_path_cell_retriever src/feverous/baseline/retriever/config_roberta.json --config_path_verdict_predictor src/feverous/baseline/predictor/config_roberta_old.json
 
-For the next steps, we employ pre-trained transformers. You can either train these themselves (c.f. next section) or download our pre-trained models directly that have been used to produce the results from the paper. The Cell extraction model can be downloaded [here](https://drive.google.com/file/d/1Zu3RUFzThPpsSkBhlYc0CBoRpIRxauGR/view?usp=sharing). Extract the model and place it into the folder `models`.  
-
-To extract relevant cells from extracted tables, run:
- ```bash
- PYTHONPATH=src/feverous python src/feverous/baseline/retriever/predict_cells_from_table.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.jsonl --max_sent 5 --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor
-  ```
-
-### Verdict Prediction
-To predict the verdict given either download our fine-tuned model  [here](https://drive.google.com/file/d/1SoxeTDp2NETbZdMpEle_QO8Cw0oxgUbV/view?usp=sharing) or train it yourself (c.f. Training). Then run:
-```bash
- PYTHONPATH=src/feverous python src/feverous/baseline/predictor/evaluate_verdict_predictor.py --input_path data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor
- ```
-
-### Training
-
-For training both the cell extraction and verdict prediction models, we use the `trainer` by `huggingface`, thus for an exhaustive list of hyperparameters to tune check out [their page](https://huggingface.co/transformers/main_classes/trainer.html). The baseline uses mostly default hyperparameters.
-
-To train the cell extraction model run:
-
-```bash
-PYTHONPATH=src/feverous python src/feverous/baseline/retriever/train_cell_evidence_retriever.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_cell_extractor --input_path data
- ```
-
-To train the verdict prediction model run respectively:
-```bash
-PYTHONPATH=src/feverous python src/feverous/baseline/predictor/train_verdict_predictor.py --wiki_path data/feverous_wikiv1.db --model_path models/feverous_verdict_predictor --input_path data --sample_nei
 ```
 
-The models are saved every n steps, thus specify the correct path during inference accordingly.
+ Note that the python file assumes that you have downloaded models and data and placed them into the appropriate folder, as instructed above. For details on how to re-train the deployed models youself, see `baseline/README`. 
+
 
 ## Evaluation
 
@@ -202,12 +167,12 @@ python src/feverous/evaluation/evaluate.py --input_path data/dev.combined.not_pr
  
 Note that any input file needs to define the fields `label`, `predicted_label`, `evidence`, and `predicted_evidence` in the format specified in the file `feverous_scorer`.
 
-## Shared Task submission
+## Leaderboard Submission
 
-Submission for the FEVER Workshop 2021 Shared Task are done on the EvalAI platform: https://eval.ai/web/challenges/challenge-page/1091/.
-Before the release of the testing data on the **24. of July** you can submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used.
+Submission to the FEVEROUS Leaderboard remain open and are done via the EvalAI platform: https://eval.ai/web/challenges/challenge-page/1091/. Submissions are listed under the *After Competition: Test Phase*. You can also submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used. The shared task which closed on the 27. July 2021 was run on the same blind test data.
 
-Submission files have to be in the same format as required for `evaluate.py`. To convert predictions from the verdict prediction step to the submission format, call the script `prepare_submission.py`.
+Submission files have to be in the same format as required for `evaluate.py`. To convert predictions from the verdict prediction step to the leaderboard submission format, call the script `prepare_submission.py`.
+
 
 ## Contact
 

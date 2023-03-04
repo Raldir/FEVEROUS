@@ -6,9 +6,10 @@
 # LICENSE file in the root directory of this source tree.
 """Documents, in a sqlite database."""
 
-import sqlite3
-from . import utils
 import json
+import sqlite3
+
+from . import utils
 
 
 class FeverousDB(object):
@@ -43,14 +44,13 @@ class FeverousDB(object):
         cursor.close()
         return results
 
-
     def get_doc_json(self, doc_id):
         """Fetch the raw text of the doc for 'doc_id'."""
         cursor = self.connection.cursor()
         cursor.execute(
             "SELECT data FROM wiki WHERE id = ?",
-            #(utils.normalize(doc_id),)
-            (doc_id, )
+            # (utils.normalize(doc_id),)
+            (doc_id,),
         )
         result = cursor.fetchone()
         cursor.close()

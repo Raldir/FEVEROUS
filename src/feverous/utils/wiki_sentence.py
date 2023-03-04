@@ -1,17 +1,19 @@
-import json
-import sys
-import os
-import jsonlines
-import traceback
-import logging
-from tqdm import tqdm
-import pickle
-import itertools
-import linecache
 import html
+import itertools
+import json
+import linecache
+import logging
+import os
+import pickle
 import re
+import sys
+import traceback
 
-from utils.util import process_text, WikiElement
+import jsonlines
+from tqdm import tqdm
+
+from feverous.utils.wiki_element import WikiElement, process_text
+
 
 class WikiSentence(WikiElement):
     def __init__(self, name, sentence, page):

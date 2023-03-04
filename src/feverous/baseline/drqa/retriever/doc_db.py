@@ -7,6 +7,7 @@
 """Documents, in a sqlite database."""
 
 import sqlite3
+
 from . import utils
 
 
@@ -42,14 +43,13 @@ class DocDB(object):
         cursor.close()
         return results
 
-
     def get_doc_json(self, doc_id):
         """Fetch the raw text of the doc for 'doc_id'."""
         cursor = self.connection.cursor()
         cursor.execute(
             "SELECT data FROM wiki WHERE id = ?",
-            #(utils.normalize(doc_id),)
-            (doc_id, )
+            # (utils.normalize(doc_id),)
+            (doc_id,),
         )
         result = cursor.fetchone()
         cursor.close()
@@ -60,8 +60,8 @@ class DocDB(object):
         cursor = self.connection.cursor()
         cursor.execute(
             "SELECT text FROM documents WHERE id = ?",
-            #(utils.normalize(doc_id),)
-            (doc_id, )
+            # (utils.normalize(doc_id),)
+            (doc_id,),
         )
         result = cursor.fetchone()
         cursor.close()
@@ -70,10 +70,7 @@ class DocDB(object):
     def get_doc_lines(self, doc_id):
         """Fetch the raw text of the doc for 'doc_id'."""
         cursor = self.connection.cursor()
-        cursor.execute(
-            "SELECT lines FROM documents WHERE id = ?",
-            (utils.normalize(doc_id),)
-        )
+        cursor.execute("SELECT lines FROM documents WHERE id = ?", (utils.normalize(doc_id),))
         result = cursor.fetchone()
         cursor.close()
         return result if result is None else result[0]

@@ -1,41 +1,45 @@
 """
 Simple Annotation Wrapper that converts each annotation into an object with corresponding attributes.
 """
-
-import json
-import sys
-import os
-import jsonlines
-import traceback
-import logging
-from tqdm import tqdm
-import pickle
-import itertools
-import linecache
 import html
+import itertools
+import json
+import linecache
+import logging
+import os
+import pickle
 import re
+import sys
+import traceback
 from enum import Enum
+from typing import Any, Dict, List
 
-from utils.util import *
-from baseline.drqa.tokenizers.spacy_tokenizer import SpacyTokenizer
-TOKENIZER = SpacyTokenizer(annotators=set(['ner']))
+import jsonlines
 
-from utils.log_helper import LogHelper
+from feverous.baseline.drqa.tokenizers.spacy_tokenizer import SpacyTokenizer
+from feverous.utils.log_helper import LogHelper
+from feverous.utils.util import *
 
 LogHelper.setup()
 logger = LogHelper.get_logger(__name__)
 
 
-
 class AnnotationProcessor:
     """
-    Args:
-        annotators: input_path to the annotation .jsonl
+    Iterable to process the annotation files to yield annotation objects.
     """
-    def __init__(self, input_path, has_content=False):
+
+    def __init__(self, input_path: str, with_content: bool = False, limit: int = None):
+        """
+        @param input_path: input path to annotation file
+        @param with_content: Whether the annotation object contains the content (i.e. text) for each annotation.
+        @param limit: Maximum number of annotations to consider. Useful for debugging purposes.
+        """
         self.input_path = input_path
-        self.has_content = has_content
+        self.with_content = with_content
+        self.tokenizer = SpacyTokenizer(annotators=set(["ner"]))
         self.annotations = self.process_annotations()
+        self.limit = limit
 
     def __iter__(self):
         return self.annotations
@@ -45,109 +49,113 @@ class AnnotationProcessor:
 
     def process_annotations(self):
         with jsonlines.open(self.input_path) as f:
-             for i,line in enumerate(f.iter()):
-                 if i == 0: continue # skip header line
-                 # if len(line['evidence'][0]['content']) == 0: continue
-                 if i == 1:
-                     if 'evidence' not in line:
-                         logger.info('No gold evidence found in the input.')
-                 try:
-                     yield Annotation(line, self.has_content)
-                 except:
-                     traceback.print_exc()
-                     logger.error('Error while processing Annotation {}'.format(line['id']))
-                     continue
+            for i, line in enumerate(f.iter()):
+                if self.limit and i >= self.limit:  # Stop if a limit is set
+                    break
+                if i == 0:
+                    continue  # skip header line
+                if i == 1:
+                    if "evidence" not in line:
+                        logger.info("No gold evidence found in the input.")
+                try:
+                    yield Annotation(line, self.tokenizer, self.with_content)
+                except:
+                    traceback.print_exc()
+                    logger.error("Error while processing Annotation {}".format(line["id"]))
+                    continue
+
 
 class EvidenceType(Enum):
+    """
+    Simple Enum for various modality types.
+    """
+
     SENTENCE = 0
     TABLE = 1
     LIST = 2
     JOINT = 3
 
-class Annotation:
-    def __init__(self, annotation_json, has_content):
-        self.annotation_json = annotation_json
-        self.has_content = has_content
-        self.convert_json_to_object(annotation_json)
 
-    def convert_json_to_object(self, annotation_json):
-        self.claim = annotation_json['claim']
-        if 'evidence' in annotation_json:
-            self.verdict = annotation_json['label'] if 'label' in annotation_json else None
-            self.evidence = [el['content'] for el in annotation_json['evidence']]
+class Annotation:
+    def __init__(self, annotation_json: Dict[str, Any], tokenizer: SpacyTokenizer, with_content: bool):
+        """
+        @param annotation_json: A json of an annotation
+        @param tokenuzer: A spacy tokenizer object which is used for processing the annotation
+        @param with_content: Whether the annotation object contains the evidence content (default is only IDs) for each annotation.
+        """
+        self.annotation_json = annotation_json
+        self.with_content = with_content
+        self.convert_json_to_object(annotation_json)
+        self.tokenizer = tokenizer
+
+    def convert_json_to_object(self, annotation_json: Dict[str, Any]) -> None:
+        self.claim = annotation_json["claim"]
+        if "evidence" in annotation_json:
+            self.verdict = annotation_json["label"] if "label" in annotation_json else None
+            self.evidence = [el["content"] for el in annotation_json["evidence"]]
             self.flat_evidence = list(itertools.chain.from_iterable(self.evidence))
-            self.titles = [[el.split('_')[0] for el in set] for set in self.evidence]
-            self.flat_titles =  [el.split('_')[0] for el in self.flat_evidence]
-            # self.flat_evidence = list(map(process_id, list(itertools.chain.from_iterable(self.evidence))))
-            self.context = [el['context'] for el in annotation_json['evidence']]
+            self.titles = [[el.split("_")[0] for el in set] for set in self.evidence]
+            self.flat_titles = [el.split("_")[0] for el in self.flat_evidence]
+            self.context = [el["context"] for el in annotation_json["evidence"]]
             self.flat_context = {}
             for ele in self.context:
                 self.flat_context.update(ele)
-            # self.flat_context = [set(list(map(process_id, el))) for el in self.flat_context]
             self.num_evidence = len(self.evidence)
-            self.operations = annotation_json['annotator_operations']
+            self.operations = annotation_json["annotator_operations"]
         else:
-            self.verdict = 'SUPPORTS' #dummy label
-        if 'id' in annotation_json:
-            self.id = annotation_json['id']
-        # else:
-        #     print('No gold evidence found in the input.')
-            # self.claim = annotation_json['claim']
-        if 'predicted_evidence' in annotation_json:
-            self.predicted_evidence = annotation_json['predicted_evidence']
-        if 'predicted_verdict' in annotation_json:
-            self.predicted_vertdict = annotation_json['predicted_verdict']
-        # self.source = annotation_json['source']
-        if self.has_content:
-            # print(annotation_json['evidence'])
+            self.verdict = "SUPPORTS"  # dummy label
+        if "id" in annotation_json:
+            self.id = annotation_json["id"]
+        if "predicted_evidence" in annotation_json:
+            self.predicted_evidence = annotation_json["predicted_evidence"]
+        if "predicted_verdict" in annotation_json:
+            self.predicted_vertdict = annotation_json["predicted_verdict"]
+        if self.with_content:
             try:
-                self.evidence_content = [el['text'] for el in annotation_json['evidence']]
+                self.evidence_content = [el["text"] for el in annotation_json["evidence"]]
                 self.flat_evidence_content = list(itertools.chain.from_iterable(self.evidence_content))
             except Exception:
                 self.flat_evidence_content = []
-            # print(self.evidence_content)
             if len(self.flat_evidence) != len(self.flat_evidence_content):
                 self.flat_evidence_content = None
                 return
-            self.flat_evidence_content_map = {ele: self.flat_evidence_content[i] for i,ele in enumerate(self.flat_evidence)}
-            self.context_content  = [el['context_text'] for el in annotation_json['evidence']]
+            self.flat_evidence_content_map = {
+                ele: self.flat_evidence_content[i] for i, ele in enumerate(self.flat_evidence)
+            }
+            self.context_content = [el["context_text"] for el in annotation_json["evidence"]]
             self.flat_context_content = {}
             for ele in self.context_content:
                 self.flat_context_content.update(ele)
             self.flat_context_content_inverse = {}
             for key, values in self.flat_context.items():
-                for i,value in enumerate(values):
+                for i, value in enumerate(values):
                     self.flat_context_content_inverse[value] = self.flat_context_content[key][i]
 
-
-    def get_evidence_text_by_id(self, id):
-        return self.flat_evidence_content_map[id]
-
-    def get_context_text_by_id(self, id):
-        return self.flat_context_content[id]
-
-    def get_context_text_by_context_id(self, id):
-        return self.flat_context_content_inverse[id]
-
-    def get_evidence_content(self):
-        return self.evidence_content
-
-    def get_context_content(self):
-        return self.context_content
-
-    def get_annotation_json(self):
+    def get_annotation_json(self) -> Dict[str, Any]:
+        """
+        @return: The entire annotation in json format.
+        """
         return self.annotation_json
 
     def get_tokenized_claim(self):
-        return TOKENIZER.tokenize(self.claim)
+        """
+        @return: Claim tokenized via SpaCy.
+        """
+        return self.tokenizer.tokenize(self.claim)
 
     def get_claim_entities(self):
-        return TOKENIZER.tokenize(self.claim).entity_groups()
+        """
+        @return: Entity mentions in the claim, identified via SpaCy.
+        """
+        return self.tokenizer.tokenize(self.claim).entity_groups()
 
     def get_claim(self):
         return self.claim
 
-    def get_evidence(self,flat=False):
+    def get_evidence(self, flat=False):
+        """
+        @param flat: Whether to return a single combined list of all evidence pieces across evidence sets.
+        """
         return self.evidence if not flat else self.flat_evidence
 
     def get_context(self, flat=False):
@@ -175,50 +183,78 @@ class Annotation:
         return len(self.flat_evidence) > 0
 
     def get_evidence_type(self, flat=False):
+        """
+        @param flat: Whether to consider all evidence sets as a single set of evidence (i.e. one set contains only sentences, the other also cells, returns JOINT)
+        @return: EvidenceType, i.e. the modality of the evidence.
+        """
         types = []
         for evid_set in self.evidence:
             type_set = set([])
             for ev in evid_set:
-                if '_cell_' in ev:
-                    type_set.add('TABLE')
-                elif '_sentence_' in ev:
-                    type_set.add('SENTENCE')
-                elif '_item_' in ev:
-                    type_set.add('LIST')
-                elif '_caption_' in ev:
-                    type_set.add('TABLE')
+                if "_cell_" in ev:
+                    type_set.add("TABLE")
+                elif "_sentence_" in ev:
+                    type_set.add("SENTENCE")
+                elif "_item_" in ev:
+                    type_set.add("LIST")
+                elif "_caption_" in ev:
+                    type_set.add("TABLE")
             if len(type_set) > 1:
-                types.append(EvidenceType['JOINT'])
+                types.append(EvidenceType["JOINT"])
             else:
                 types.append(EvidenceType[type_set.pop()])
         if not flat:
             return types
         else:
             if len(types) > 1:
-                return EvidenceType['JOINT']
+                return EvidenceType["JOINT"]
             else:
                 return types[0]
 
-def get_annotation_evidence(input_path):
-    annotations = AnnotationProcessor(os.path.join(input_path, 'annotations', 'annotations_230421.jsonl'))
-    cell_evidence = set([])
-    annotation_titles = set([])
-    annotations = [anno for anno in annotations]
-    anno_evidence = list(itertools.chain.from_iterable([anno.flat_evidence for anno in annotations]))
-    annotation_titles =  list(itertools.chain.from_iterable([anno.flat_titles for anno in annotations]))
-    anno_context = list(itertools.chain.from_iterable([anno.flat_context for anno in annotations]))
-    return anno_evidence, annotation_titles, anno_context
+    def get_evidence_text_by_id(self, id: str) -> str:
+        """
+        @param id: evidence id
+        @return: content (i.e. text) of the evidence element
+        """
+        return self.flat_evidence_content_map[id]
 
-def get_annotation_claims(input_path):
-    annotations = AnnotationProcessor(os.path.join(input_path, 'annotations', 'annotations_230421.jsonl'))
-    annotations = [anno for anno in annotations]
-    anno_claims = [anno.get_tokenized_claim() for anno in annotations]
-    print([list(zip(tok.words(), tok.entities())) for tok in anno_claims])
+    def get_context_text_by_id(self, id: str) -> List[str]:
+        """
+        @param id: evidence id
+        @return: List of context content (i.e. text) of the evidence element
+        """
+        return self.flat_context_content[id]
+
+    def get_context_text_by_context_id(self, id: str) -> str:
+        """
+        @param id: context id
+        @return: content (i.e. text) of the context element
+        """
+        return self.flat_context_content_inverse[id]
+
+    def get_evidence_content(self) -> List[str]:
+        return self.evidence_content
+
+    def get_context_content(self) -> List[str]:
+        return self.context_content
+
 
 def main():
     input_path = sys.argv[1]
-    annotations = AnnotationProcessor(os.path.join(input_path, 'annotations', 'annotations_230421.jsonl'))
-    get_annotation_claims(input_path)
+    annotations = AnnotationProcessor(os.path.join(input_path, "dev.jsonl"))
+
+    for anno in annotations:
+        claim = anno.get_claim()
+        claim_entities = anno.get_claim_entities()
+        verdict = anno.get_verdict()
+        evidence = anno.get_evidence()
+        context = anno.get_context()
+        print(claim)
+        print(claim_entities)
+        print(verdict)
+        print(evidence)
+        print(context)
+
 
 if __name__ == "__main__":
     main()

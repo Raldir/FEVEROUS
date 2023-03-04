@@ -9,36 +9,33 @@
 Requires spaCy package and the spaCy english model.
 """
 
-import spacy
 import copy
-from baseline.drqa.tokenizers.tokenizer import Tokens, Tokenizer
+
+import spacy
+
+from feverous.baseline.drqa.tokenizers.tokenizer import Tokenizer, Tokens
 
 
 class SpacyTokenizer(Tokenizer):
-
     def __init__(self, **kwargs):
         """
         Args:
             annotators: set that can include pos, lemma, and ner.
             model: spaCy model to use (either path, or keyword like 'en').
         """
-        model = kwargs.get('model', 'en_core_web_sm')
-        self.annotators = copy.deepcopy(kwargs.get('annotators', set()))
-        nlp_kwargs = {'parser': False}
-        if not any([p in self.annotators for p in ['lemma', 'pos', 'ner']]):
-            nlp_kwargs['tagger'] = False
-        if 'ner' not in self.annotators:
-            nlp_kwargs['entity'] = False
-        self.nlp = spacy.load('en_core_web_sm')
+        model = kwargs.get("model", "en_core_web_sm")
+        self.annotators = copy.deepcopy(kwargs.get("annotators", set()))
+        nlp_kwargs = {"parser": False}
+        if not any([p in self.annotators for p in ["lemma", "pos", "ner"]]):
+            nlp_kwargs["tagger"] = False
+        if "ner" not in self.annotators:
+            nlp_kwargs["entity"] = False
+        self.nlp = spacy.load("en_core_web_sm")
 
     def tokenize(self, text):
         # We don't treat new lines as tokens.
-        clean_text = text.replace('\n', ' ')
-        tokens = self.nlp.tokenizer(clean_text)
-        if any([p in self.annotators for p in ['lemma', 'pos', 'ner']]):
-            self.nlp.tagger(tokens)
-        if 'ner' in self.annotators:
-            self.nlp.entity(tokens)
+        clean_text = text.replace("\n", " ")
+        tokens = self.nlp(clean_text)
 
         data = []
         for i in range(len(tokens)):
@@ -49,22 +46,26 @@ class SpacyTokenizer(Tokenizer):
             else:
                 end_ws = tokens[i].idx + len(tokens[i].text)
 
-            data.append((
-                tokens[i].text,
-                text[start_ws: end_ws],
-                (tokens[i].idx, tokens[i].idx + len(tokens[i].text)),
-                tokens[i].tag_,
-                tokens[i].lemma_,
-                tokens[i].ent_type_,
-            ))
+            data.append(
+                (
+                    tokens[i].text,
+                    text[start_ws:end_ws],
+                    (tokens[i].idx, tokens[i].idx + len(tokens[i].text)),
+                    tokens[i].tag_,
+                    tokens[i].lemma_,
+                    tokens[i].ent_type_,
+                )
+            )
 
         # Set special option for non-entity tag: '' vs 'O' in spaCy
-        return Tokens(data, self.annotators, opts={'non_ent': ''})
+        return Tokens(data, self.annotators, opts={"non_ent": ""})
+
 
 def main():
-    st = SpacyTokenizer(annotators=set(['ner']))
-    tok = sp.tokenize('John Gurton is my name.')
+    st = SpacyTokenizer(annotators=set(["ner"]))
+    tok = sp.tokenize("John Gurton is my name.")
     print(tok)
+
 
 if __name__ == "__main__":
     main()

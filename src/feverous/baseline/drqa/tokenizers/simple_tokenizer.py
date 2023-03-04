@@ -8,16 +8,18 @@
 non-whitespace tokens.
 """
 
-import regex
 import logging
-from .tokenizer import Tokens, Tokenizer
+
+import regex
+
+from .tokenizer import Tokenizer, Tokens
 
 logger = logging.getLogger(__name__)
 
 
 class SimpleTokenizer(Tokenizer):
-    ALPHA_NUM = r'[\p{L}\p{N}\p{M}]+'
-    NON_WS = r'[^\p{Z}\p{C}]'
+    ALPHA_NUM = r"[\p{L}\p{N}\p{M}]+"
+    NON_WS = r"[^\p{Z}\p{C}]"
 
     def __init__(self, **kwargs):
         """
@@ -25,12 +27,12 @@ class SimpleTokenizer(Tokenizer):
             annotators: None or empty set (only tokenizes).
         """
         self._regexp = regex.compile(
-            '(%s)|(%s)' % (self.ALPHA_NUM, self.NON_WS),
-            flags=regex.IGNORECASE + regex.UNICODE + regex.MULTILINE
+            "(%s)|(%s)" % (self.ALPHA_NUM, self.NON_WS), flags=regex.IGNORECASE + regex.UNICODE + regex.MULTILINE
         )
-        if len(kwargs.get('annotators', {})) > 0:
-            logger.warning('%s only tokenizes! Skipping annotators: %s' %
-                           (type(self).__name__, kwargs.get('annotators')))
+        if len(kwargs.get("annotators", {})) > 0:
+            logger.warning(
+                "%s only tokenizes! Skipping annotators: %s" % (type(self).__name__, kwargs.get("annotators"))
+            )
         self.annotators = set()
 
     def tokenize(self, text):
@@ -49,9 +51,11 @@ class SimpleTokenizer(Tokenizer):
                 end_ws = span[1]
 
             # Format data
-            data.append((
-                token,
-                text[start_ws: end_ws],
-                span,
-            ))
+            data.append(
+                (
+                    token,
+                    text[start_ws:end_ws],
+                    span,
+                )
+            )
         return Tokens(data, self.annotators)

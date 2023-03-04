@@ -7,9 +7,7 @@
 
 import os
 
-DEFAULTS = {
-    'corenlp_classpath': os.getenv('CLASSPATH')
-}
+DEFAULTS = {"corenlp_classpath": os.getenv("CLASSPATH")}
 
 
 def set_default(key, value):
@@ -29,26 +27,26 @@ except ImportError:
 
 
 def get_class(name):
-    if name == 'spacy':
+    if name == "spacy":
         return SpacyTokenizer
-    if name == 'corenlp':
+    if name == "corenlp":
         return CoreNLPTokenizer
-    if name == 'regexp':
+    if name == "regexp":
         return RegexpTokenizer
-    if name == 'simple':
+    if name == "simple":
         return SimpleTokenizer
 
-    raise RuntimeError('Invalid tokenizer: %s' % name)
+    raise RuntimeError("Invalid tokenizer: %s" % name)
 
 
 def get_annotators_for_args(args):
     annotators = set()
     if args.use_pos:
-        annotators.add('pos')
+        annotators.add("pos")
     if args.use_lemma:
-        annotators.add('lemma')
+        annotators.add("lemma")
     if args.use_ner:
-        annotators.add('ner')
+        annotators.add("ner")
     return annotators
 
 

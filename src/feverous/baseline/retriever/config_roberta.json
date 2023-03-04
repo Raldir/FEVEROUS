@@ -1,0 +1,14 @@
+{
+    "num_train_epochs": 1,
+    "per_device_train_batch_size": 16,
+    "per_device_eval_batch_size": 16,
+    "gradient_accumulation_steps": 1,
+    "warmup_steps": 0,
+    "weight_decapy": 0.01,
+    "learning_rate": 0.00005,
+    "save_steps": 2700,
+    "logging_steps": 1000,
+    "model_name": "roberta-base",
+    "model_path": "../models/feverous_cell_extractor",
+    "prediction_threshold": 0.25
+}
