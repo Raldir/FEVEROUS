@@ -20,6 +20,7 @@ from tqdm import tqdm
 from transformers import (
     AdamW,
     AutoTokenizer,
+    AutoModelForTokenClassification,
     BertForSequenceClassification,
     RobertaForTokenClassification,
     RobertaTokenizer,
@@ -77,6 +78,7 @@ def compute_metrics(pred):
 def model_trainer(test_dataset, config):
     # model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels =4)
     model = AutoModelForTokenClassification.from_pretrained(config["model_path"], num_labels=3, return_dict=True)
+
 
     # /anfs/bigdisc/rmya2/faiss_data/results_table_to_cell2/checkpoint-1400/'
     training_args = TrainingArguments(
@@ -262,7 +264,7 @@ def extract_cells_from_tables(annotations, input_path, wiki_path, trivial_baseli
 
         test_dataset = FEVEROUSDataset(text_test, labels_test)
 
-        trainer, model = model_trainer(test_dataset, config["model_path"])
+        trainer, model = model_trainer(test_dataset, config)
         model_output = trainer.predict(test_dataset)
 
         # predictions = model_output.predictions.argmax(-1)
@@ -355,6 +357,8 @@ def main():
     parser.add_argument("--wiki_path", type=str)
 
     args = parser.parse_args()
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     cell_retrieval(args.input_path, args.config_path, args.wiki_path, args.trivial_baseline)
 

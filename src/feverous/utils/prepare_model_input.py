@@ -1,6 +1,7 @@
 import json
 from typing import Dict, List
 from urllib.parse import unquote
+import random
 
 import jsonlines
 from cleantext import clean
@@ -72,7 +73,23 @@ def prepare_input_schlichtkrull(annotation: Dict[str, any], has_gold: bool, db: 
     """
     sequence = [annotation.claim]
     if has_gold:
-        evidence_by_page = get_evidence_by_page(annotation.flat_evidence)
+        evidence_gold = annotation.flat_evidence
+        evidence_pred = annotation.predicted_evidence
+        evidence_pred = [x for x in evidence_pred if x not in evidence_gold][:3]
+
+        # Adding noise to gold data to make model more robust
+        adding_noise_prob = 0.125
+        evidence_combined = []
+        count = 0
+        for i, evidence in enumerate(evidence_gold):
+            rand_ceil = adding_noise_prob * ((i + 1)) # Adding more noise the larger index
+            rand = random.uniform(0, 1)
+            if rand < rand_ceil and count < len(evidence_pred):
+                evidence_combined.append(evidence_pred[count])
+                count += 1
+            evidence_combined.append(evidence)
+
+        evidence_by_page = get_evidence_by_page(evidence_combined)
     else:
         evidence_by_page = get_evidence_by_page(annotation.predicted_evidence)
     for ele in evidence_by_page:

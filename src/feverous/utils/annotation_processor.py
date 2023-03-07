@@ -24,6 +24,8 @@ LogHelper.setup()
 logger = LogHelper.get_logger(__name__)
 
 
+TOKENIZER = SpacyTokenizer(annotators=set(["ner"]))
+
 class AnnotationProcessor:
     """
     Iterable to process the annotation files to yield annotation objects.
@@ -37,7 +39,6 @@ class AnnotationProcessor:
         """
         self.input_path = input_path
         self.with_content = with_content
-        self.tokenizer = SpacyTokenizer(annotators=set(["ner"]))
         self.annotations = self.process_annotations()
         self.limit = limit
 
@@ -58,7 +59,7 @@ class AnnotationProcessor:
                     if "evidence" not in line:
                         logger.info("No gold evidence found in the input.")
                 try:
-                    yield Annotation(line, self.tokenizer, self.with_content)
+                    yield Annotation(line, self.with_content)
                 except:
                     traceback.print_exc()
                     logger.error("Error while processing Annotation {}".format(line["id"]))
@@ -77,16 +78,14 @@ class EvidenceType(Enum):
 
 
 class Annotation:
-    def __init__(self, annotation_json: Dict[str, Any], tokenizer: SpacyTokenizer, with_content: bool):
+    def __init__(self, annotation_json: Dict[str, Any], with_content: bool):
         """
         @param annotation_json: A json of an annotation
-        @param tokenuzer: A spacy tokenizer object which is used for processing the annotation
         @param with_content: Whether the annotation object contains the evidence content (default is only IDs) for each annotation.
         """
         self.annotation_json = annotation_json
         self.with_content = with_content
         self.convert_json_to_object(annotation_json)
-        self.tokenizer = tokenizer
 
     def convert_json_to_object(self, annotation_json: Dict[str, Any]) -> None:
         self.claim = annotation_json["claim"]
@@ -141,13 +140,13 @@ class Annotation:
         """
         @return: Claim tokenized via SpaCy.
         """
-        return self.tokenizer.tokenize(self.claim)
+        return TOKENIZER.tokenize(self.claim)
 
     def get_claim_entities(self):
         """
         @return: Entity mentions in the claim, identified via SpaCy.
         """
-        return self.tokenizer.tokenize(self.claim).entity_groups()
+        return TOKENIZER.tokenize(self.claim).entity_groups()
 
     def get_claim(self):
         return self.claim

@@ -3,6 +3,7 @@ import collections
 import copy
 import itertools
 import math
+import json
 import os
 import random
 import sys
@@ -152,21 +153,22 @@ def claim_evidence_predictor(annotations_train, annotations_dev, feverous_db, co
         for i, anno in enumerate(tqdm(annotations_train))
     ]
 
-    print(claim_evidence_input)
-
     claim_evidence_input_test = [
         (prepare_input(anno, "schlichtkrull", feverous_db, gold=True), anno.get_verdict())
         for i, anno in enumerate(tqdm(annotations_dev))
     ]
+
+    print(claim_evidence_input[0])
+    print(claim_evidence_input_test[0])
 
     text_train, labels_train = process_data(claim_evidence_input, config["map_verdict_to_index"])
 
     text_test, labels_test = process_data(claim_evidence_input_test, config["map_verdict_to_index"])
 
     tokenizer = AutoTokenizer.from_pretrained(config["model_name"])
-    tokenizer = AutoTokenizer.from_pretrained(
+    # tokenizer = AutoTokenizer.from_pretrained(
         # "cross-encoder/nli-deberta-v3-large"
-    )  # ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli')
+    # )  # ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli')
     text_train = tokenizer(text_train, padding=True, truncation=True)
     train_dataset = FEVEROUSDataset(text_train, labels_train)
     text_test = tokenizer(text_test, padding=True, truncation=True)
@@ -181,19 +183,23 @@ def claim_evidence_predictor(annotations_train, annotations_dev, feverous_db, co
 def train_verdict_predictor(input_path: str, config_path: str, wiki_path: str, sample_nei: bool = True) -> None:
     feverous_db = FeverousDB(wiki_path)
 
-    train_data_path = os.path.join(input_path, "train.jsonl")
-    dev_data_path = os.path.join(input_path, "dev.jsonl")
+    # train_data_path = os.path.join(input_path, "train.jsonl")
+    # dev_data_path = os.path.join(input_path, "dev.jsonl")
+
+    train_data_path = os.path.join(input_path, "train.combined.not_precomputed.p5.s5.t3.cells.jsonl")
+    dev_data_path = os.path.join(input_path, "dev.combined.not_precomputed.p5.s5.t3.cells.jsonl")
 
     with open(config_path, "r") as f:
         config = json.load(f)
 
-    anno_processor_train = AnnotationProcessor(train_data_path, with_content=False)
+    anno_processor_train = AnnotationProcessor(train_data_path, with_content=False, limit=40000)
     annotations_train = [annotation for annotation in anno_processor_train]
-    annotations_train = annotations_train
+    print(annotations_train[0].claim, annotations_train[0].flat_evidence)
+    # annotations_train = annotations_train
     if sample_nei:
         annotations_train = sample_nei_instances(annotations_train, config["nei_sampling_ratio"])
-    annotations_dev = None
-    anno_processor_dev = AnnotationProcessor(dev_data_path, with_content=False)
+
+    anno_processor_dev = AnnotationProcessor(dev_data_path, with_content=False, limit=10000)
     annotations_dev = [annotation for annotation in anno_processor_dev]
 
     claim_evidence_predictor(annotations_train, annotations_dev, feverous_db, config)

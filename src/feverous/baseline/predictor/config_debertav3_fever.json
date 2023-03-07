@@ -1,5 +1,5 @@
 {
-    "num_train_epochs": 2,
+    "num_train_epochs": 6,
     "per_device_train_batch_size": 8,
     "per_device_eval_batch_size": 16,
     "gradient_accumulation_steps": 4,
@@ -8,8 +8,8 @@
     "learning_rate": 0.00001,
     "save_steps": 3000,
     "logging_steps": 1000,
-    "model_name": "cross-encoder/nli-deberta-v3-large",
-    "model_path": "../models/verdict_predictor_debertav3",
-    "map_verdict_to_index": {"NOT ENOUGH INFO": 2, "SUPPORTS": 1, "REFUTES": 0},
+    "model_name": "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli",
+    "model_path": "../models/verdict_predictor_debertav3_fever",
+    "map_verdict_to_index": {"NOT ENOUGH INFO": 1, "SUPPORTS": 0, "REFUTES": 2},
     "nei_sampling_ratio": 1
 }
