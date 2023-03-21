@@ -170,7 +170,10 @@ Note that any input file needs to define the fields `label`, `predicted_label`, 
 
 ## Leaderboard Submission
 
-Submission to the FEVEROUS Leaderboard remain open and are done via the EvalAI platform: https://eval.ai/web/challenges/challenge-page/1091/. Submissions are listed under the *After Competition: Test Phase*. You can also submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used. The shared task which closed on the 27. July 2021 was run on the same blind test data.
+Submission to the FEVEROUS Leaderboard remain open and are done via the EvalAI platform: https://eval.ai/web/challenges/challenge-page/1091/. 
+
+Submissions are listed under the *After Competition: Test Phase*. You can also submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used. The shared task which closed on the 27. July 2021 was run on the same blind test data.
+
 
 Submission files have to be in the same format as required for `evaluate.py`. To convert predictions from the verdict prediction step to the leaderboard submission format, call the script `prepare_submission.py`.
 
