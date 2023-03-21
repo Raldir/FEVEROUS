@@ -154,8 +154,8 @@ To run the baseline, you can either execute each individual step manually (see `
  python3 examples/baseline.py --split dev --doc_count 5 --sent_count 5 --tab_count 3 --config_path_cell_retriever src/feverous/baseline/retriever/config_roberta.json --config_path_verdict_predictor src/feverous/baseline/predictor/config_roberta_old.json
 
 ```
-
- Note that the python file assumes that you have downloaded models and data and placed them into the appropriate folder, as instructed above. For details on how to re-train the deployed models youself, see `baseline/README`. 
+The script will create several intermediate prediction files, the final one being `data/dev.combined.not_precomputed.p5.s5.t3.cells.verdict.jsonl`.
+Note that the python file assumes that you have downloaded models and data and placed them into the appropriate folder, as instructed above. For details on how to re-train the deployed models youself, see `baseline/README`. 
 
 
 ## Evaluation
