@@ -1,4 +1,5 @@
 import argparse
+import os
 
 from feverous.baseline.predictor.evaluate_verdict_predictor import predict_verdict
 from feverous.baseline.retriever import (
@@ -10,6 +11,7 @@ from feverous.baseline.retriever import (
     sentence_tfidf_retrieval,
     table_tfidf_retrieval,
 )
+from feverous.evaluation.evaluate import feverous_evaluation
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -41,6 +43,7 @@ if __name__ == "__main__":
         "--config_path_verdict_predictor",
         type=str,
         default="src/feverous/baseline/predictor/config_roberta_old.json",
+        # default="src/feverous/baseline/predictor/config_debertav3_fever.json", # Use this one for a slightly improved verification model
         help="Path to the json config file for the verdict predictor.",
     )
 
@@ -53,12 +56,12 @@ if __name__ == "__main__":
     build_tfidf(db_path=args.tf_idf_db_path, out_dir=args.tf_idf_index_path)
 
     # Entity and TF-IDF based document selection
-    document_entity_tf_idf_retrieval(
+    document_entity_tfidf_retrieval(
         split=args.split, count=args.doc_count, db=args.tf_idf_db_path, data_path=args.data_path, model=index_name
     )
 
     # Based on retrieved documents, re-rank sentenes and tables via TF-IDF and combine selected evidence
-    sentence_tf_idf_dr_qa(
+    sentence_tfidf_retrieval(
         split=args.split,
         max_page=args.doc_count,
         max_sent=args.sent_count,
@@ -66,7 +69,7 @@ if __name__ == "__main__":
         db=args.db_path,
         data_path=args.data_path,
     )
-    table_tf_idf_dr_qa(
+    table_tfidf_retrieval(
         split=args.split,
         max_page=args.doc_count,
         max_tabs=args.tab_count,
@@ -85,7 +88,7 @@ if __name__ == "__main__":
     # Select specific cells in re-ranked tables as evidence
     cell_retrieval(
         input_path=os.path.join(
-            data_path,
+            args.data_path,
             "{}.combined.not_precomputed.p{}.s{}.t{}.jsonl".format(
                 args.split, args.doc_count, args.sent_count, args.tab_count
             ),
@@ -97,7 +100,7 @@ if __name__ == "__main__":
     # Predict verdict based on retrieved evidence
     predict_verdict(
         input_path=os.path.join(
-            data_path,
+            args.data_path,
             "{}.combined.not_precomputed.p{}.s{}.t{}.cells.jsonl".format(
                 args.split, args.doc_count, args.sent_count, args.tab_count
             ),
@@ -106,5 +109,13 @@ if __name__ == "__main__":
         config_path=args.config_path_verdict_predictor,
     )
 
-    # # Evaluate both retrieved evidence and predicted verdict on FEVEROUS score
-    # feverous_evaluation(input_path= os.path.join(data_path, "{}.combined.not_precomputed.p{}.s{}.t{}.cells.verdict.jsonl".format(args.split, args.doc_count, args.sent_count, args.tab_count)), use_gold_verdict = False)
+    # Evaluate both retrieved evidence and predicted verdict on FEVEROUS score
+    feverous_evaluation(
+        input_path=os.path.join(
+            args.data_path,
+            "{}.combined.not_precomputed.p{}.s{}.t{}.cells.verdict.jsonl".format(
+                args.split, args.doc_count, args.sent_count, args.tab_count
+            ),
+        ),
+        use_gold_verdict=False,
+    )

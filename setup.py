@@ -1,5 +1,6 @@
 from setuptools import find_packages, setup
 
+import os
 import pathlib
 
 
@@ -8,15 +9,16 @@ HERE = pathlib.Path(__file__).parent
 
 # The text of the README file
 README = (HERE / "README.md").read_text()
+print(HERE)
 
 # Dependencies required to use your package
-with open('src/feverous/requirements.txt', 'r') as fh:
+with open(os.path.join("src", "feverous", "requirements.txt"), 'r') as fh:
     INSTALL_REQS = [l.strip() for l in fh.readlines() if l.strip()]
 
 
 setup(
     name='feverous',
-    version='0.0.3',
+    version='0.5',
     description="Repository for Fact Extraction and VERification Over Unstructured and Structured information (FEVEROUS), used for the FEVER Workshop Shared Task at EMNLP2021.",
     long_description=README,
     long_description_content_type="text/markdown",

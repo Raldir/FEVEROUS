@@ -199,7 +199,7 @@ def train_verdict_predictor(input_path: str, config_path: str, wiki_path: str, s
     if sample_nei:
         annotations_train = sample_nei_instances(annotations_train, config["nei_sampling_ratio"])
 
-    anno_processor_dev = AnnotationProcessor(dev_data_path, with_content=False, limit=10000)
+    anno_processor_dev = AnnotationProcessor(dev_data_path, with_content=False)
     annotations_dev = [annotation for annotation in anno_processor_dev]
 
     claim_evidence_predictor(annotations_train, annotations_dev, feverous_db, config)

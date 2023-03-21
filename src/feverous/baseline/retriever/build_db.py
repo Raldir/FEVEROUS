@@ -80,7 +80,7 @@ def get_contents_sentence(entry):
     return document
 
 
-def store_contents(wiki_processor, save_path, preprocess, num_workers=None):
+def store_contents(db, save_path, preprocess, num_workers=None):
     """Preprocess and store a corpus of documents in sqlite.
 
     Args:

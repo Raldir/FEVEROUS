@@ -70,8 +70,6 @@ def str2bool(v):
 
 def table_tfidf_retrieval(
     db: str,
-    model: str,
-    in_file: str,
     max_page: int,
     max_tabs: int,
     data_path: str,
@@ -81,6 +79,7 @@ def table_tfidf_retrieval(
     hash_size: int = int(np.math.pow(2, 24)),
     tokenizer: str = "simple",
     num_workers: int = None,
+    model: str = "data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz",
 ) -> None:
     doc_freqs = None
 
@@ -116,8 +115,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--db", type=str, help="/path/to/saved/db.db")
-    parser.add_argument("--model", type=str, help="/path/to/saved/db.db")
-    parser.add_argument("--in_file", type=str, help="/path/to/saved/db.db")
+    parser.add_argument("--model", efault="data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz", type=str, help="/path/to/saved/db.db")
     parser.add_argument("--max_page", type=int)
     parser.add_argument("--max_tabs", type=int)
     parser.add_argument("--use_precomputed", type=str2bool, default=True)
@@ -141,8 +139,6 @@ if __name__ == "__main__":
 
     table_tfidf_retrieval(
         args.db,
-        args.model,
-        args.in_file,
         args.max_page,
         args.max_tabs,
         args.data_path,
@@ -152,4 +148,5 @@ if __name__ == "__main__":
         args.hash_size,
         args.tokenizer,
         args.num_workers,
+        args.model,
     )

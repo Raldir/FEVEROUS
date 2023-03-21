@@ -8,7 +8,7 @@
     "learning_rate": 0.00005,
     "save_steps": 2700,
     "logging_steps": 1000,
-    "model_name": "roberta-base",
-    "model_path": "models/feverous_cell_extractor",
+    "model_name": "roberta-large",
+    "model_path": "models/feverous_cell_extractor_large",
     "prediction_threshold": 0.25
 }

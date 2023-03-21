@@ -50,7 +50,7 @@ def tf_idf_claim(line, db, max_page, max_sent, ngram, hash_size, tokenizer, num_
             lines.append({"sentence": p_line[0], "page": p_line[1], "line_on_page": p_line[2]})
 
         scores = tf_idf_sim(
-            line["claim"], lines, max_sent, ngram, hash_size, tokenizer, num_workers, doc_freqs, freqs=doc_freqs
+            line["claim"], lines, max_sent, ngram, hash_size, tokenizer, num_workers, freqs=doc_freqs
         )
 
         line["predicted_sentences"] = [(s["page"], s["line_on_page"]) for s in scores]
@@ -68,8 +68,6 @@ def str2bool(v):
 
 def sentence_tfidf_retrieval(
     db: str,
-    model: str,
-    in_file: str,
     max_page: int,
     max_sent: int,
     data_path: str,
@@ -79,6 +77,7 @@ def sentence_tfidf_retrieval(
     hash_size: int = int(np.math.pow(2, 24)),
     tokenizer: str = "simple",
     num_workers: int = None,
+    model: str = "data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz",
 ) -> None:
     doc_freqs = None
     if use_precomputed:
@@ -113,8 +112,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--db", type=str, help="/path/to/saved/db.db")
-    parser.add_argument("--model", type=str, help="/path/to/saved/db.db")
-    parser.add_argument("--in_file", type=str, help="/path/to/saved/db.db")
+    parser.add_argument("--model", type=str, default="data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz", help="/path/to/saved/db.db")
     parser.add_argument("--max_page", type=int)
     parser.add_argument("--max_sent", type=int)
     parser.add_argument("--data_path", type=str)
@@ -138,8 +136,6 @@ if __name__ == "__main__":
 
     sentence_tfidf_retrieval(
         args.db,
-        args.model,
-        args.in_file,
         args.max_page,
         args.max_sent,
         args.data_path,
@@ -149,4 +145,5 @@ if __name__ == "__main__":
         args.hash_size,
         args.tokenizer,
         args.num_workers,
+        args.model,
     )

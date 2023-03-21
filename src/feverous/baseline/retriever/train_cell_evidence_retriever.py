@@ -12,7 +12,6 @@ from urllib.parse import unquote
 
 import jsonlines
 import numpy as np
-import pandas as pd
 import torch
 from cleantext import clean
 from sklearn.metrics import accuracy_score, classification_report, precision_recall_fscore_support
@@ -118,7 +117,7 @@ def model_trainer(train_dataset, test_dataset, config):
     model = RobertaForTokenClassification.from_pretrained(config["model_name"], num_labels=3, return_dict=True)
 
     training_args = TrainingArguments(
-        output_dir=model_path,  # output directory
+        output_dir=config["model_path"],  # output directory
         num_train_epochs=config["num_train_epochs"],  # total # of training epochs
         per_device_train_batch_size=config["per_device_train_batch_size"],  # batch size per device during training
         per_device_eval_batch_size=config["per_device_eval_batch_size"],  # batch size for evaluation
@@ -265,7 +264,7 @@ def tokenize_and_align_labels(text_in, labels_in, tokenizer):
     return tokenized_inputs, labels
 
 
-def claim_hypothesis_only_bias(annotations_train, annotations_dev, feverous_db, config):
+def trainer_cell_retriever(annotations_train, annotations_dev, db, config):
     all_input = []
     all_labels = []
 
@@ -289,7 +288,6 @@ def claim_hypothesis_only_bias(annotations_train, annotations_dev, feverous_db, 
     text_dev, labels_dev = process_data(claim_evidence_type_list_dev)
 
     tokenizer = AutoTokenizer.from_pretrained(config["model_name"], do_lower_case=True, add_prefix_space=True)
-    # results =  []
 
     text_train, labels_train = tokenize_and_align_labels(text_train, labels_train, tokenizer)
     text_dev, labels_dev = tokenize_and_align_labels(text_dev, labels_dev, tokenizer)
@@ -311,11 +309,11 @@ def train_cell_retriever(input_path: str, wiki_path: str, config_path: str):
     with open(config_path, "r") as f:
         config = json.load(f)
 
-    anno_processor_train = AnnotationProcessor(data_path_train)
-    anno_processor_dev = AnnotationProcessor(data_path_dev)
+    anno_processor_train = AnnotationProcessor(data_path_train, limit=10)
+    anno_processor_dev = AnnotationProcessor(data_path_dev, limit=10)
     annotations_train = [annotation for annotation in anno_processor_train]
     annotations_dev = [annotation for annotation in anno_processor_dev]
-    claim_hypothesis_only_bias(annotations_train, annotations_dev, db, config)
+    trainer_cell_retriever(annotations_train, annotations_dev, db, config)
 
 
 def main():

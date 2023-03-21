@@ -17,7 +17,7 @@ def process(ranker, query, k=1):
 
 def document_entity_tfidf_retrieval(split: str, count: str, db: str, data_path: str, model: str) -> None:
     ranker = retriever.get_class("tfidf")(tfidf_path=model)
-    annotation_processor = AnnotationProcessor("{}/{}.jsonl".format(args.data_path, split))
+    annotation_processor = AnnotationProcessor("{}/{}.jsonl".format(data_path, split))
     db = DocDB(db)
     document_titles = set(db.get_doc_ids())
 

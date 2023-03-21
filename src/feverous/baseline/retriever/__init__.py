@@ -3,3 +3,5 @@ from .build_tfidf import build_tfidf
 from .combine_retrieval import combine_retrieval
 from .document_entity_tfidf_ir import document_entity_tfidf_retrieval
 from .predict_cells_from_table import cell_retrieval
+from .sentence_tfidf_drqa import sentence_tfidf_retrieval
+from .table_tfidf_drqa import table_tfidf_retrieval
