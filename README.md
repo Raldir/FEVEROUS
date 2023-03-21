@@ -20,7 +20,8 @@ Unstructured and Structured information](https://arxiv.org/pdf/2106.05707.pdf).
 Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the FEVER Workshop 2021 shared task @EMNLP on FEVEROUS.
 
 ## Change Log
-* **6 March 2023** - Compatibility updates and refactoring code of reading Wikipedia and running the baseline for increased accessibility.
+* **21 March 2023** - Updated code and execution pipeline for FEVEROUS baseline.
+* **6 March 2023** - Compatibility updates and refactoring code of reading Wikipedia.
 * **24 Sep 2021** - The Feverous repository is now also accessible through PyPI. Install it using `python -m pip install feverous`.
 * **24 Sep 2021** - The Feverous repository is now also accessible through PyPI. Install it using `python -m pip install feverous`.
 * **Nov 2021** - FEVEROUS Shared Task Description paper is now [online](https://aclanthology.org/2021.fever-1.1.pdf). Congratulations to all participating teams!
