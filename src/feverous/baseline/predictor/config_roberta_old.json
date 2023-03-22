@@ -9,7 +9,7 @@
     "save_steps": 5900,
     "logging_steps": 1200,
     "model_name": "ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
-    "model_path": "models/verdict_predictor",
+    "model_path": "models/feverous_verdict_predictor",
     "map_verdict_to_index": {"NOT ENOUGH INFO": 0, "SUPPORTS": 1, "REFUTES": 2},
     "nei_sampling_ratio": 1
 }

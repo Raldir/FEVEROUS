@@ -52,50 +52,50 @@ if __name__ == "__main__":
     index_name = "data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz"
 
     # Build the TF-iDF index for retrieval using introductory Wikipedia section
-    build_db(db_path=args.db_path, save_path=args.tf_idf_db_path, mode="intro", preprocess=None, num_workers=None)
-    build_tfidf(db_path=args.tf_idf_db_path, out_dir=args.tf_idf_index_path)
+    # build_db(db_path=args.db_path, save_path=args.tf_idf_db_path, mode="intro", preprocess=None, num_workers=None)
+    # build_tfidf(db_path=args.tf_idf_db_path, out_dir=args.tf_idf_index_path)
 
-    # Entity and TF-IDF based document selection
-    document_entity_tfidf_retrieval(
-        split=args.split, count=args.doc_count, db=args.tf_idf_db_path, data_path=args.data_path, model=index_name
-    )
+    # # Entity and TF-IDF based document selection
+    # document_entity_tfidf_retrieval(
+    #     split=args.split, count=args.doc_count, db=args.tf_idf_db_path, data_path=args.data_path, model=index_name
+    # )
 
-    # Based on retrieved documents, re-rank sentenes and tables via TF-IDF and combine selected evidence
-    sentence_tfidf_retrieval(
-        split=args.split,
-        max_page=args.doc_count,
-        max_sent=args.sent_count,
-        use_precomputed=False,
-        db=args.db_path,
-        data_path=args.data_path,
-    )
-    table_tfidf_retrieval(
-        split=args.split,
-        max_page=args.doc_count,
-        max_tabs=args.tab_count,
-        use_precomputed=False,
-        db=args.db_path,
-        data_path=args.data_path,
-    )
-    combine_retrieval(
-        split=args.split,
-        max_page=args.doc_count,
-        max_sent=args.sent_count,
-        max_tabs=args.tab_count,
-        data_path=args.data_path,
-    )
+    # # Based on retrieved documents, re-rank sentenes and tables via TF-IDF and combine selected evidence
+    # sentence_tfidf_retrieval(
+    #     split=args.split,
+    #     max_page=args.doc_count,
+    #     max_sent=args.sent_count,
+    #     use_precomputed=False,
+    #     db=args.db_path,
+    #     data_path=args.data_path,
+    # )
+    # table_tfidf_retrieval(
+    #     split=args.split,
+    #     max_page=args.doc_count,
+    #     max_tabs=args.tab_count,
+    #     use_precomputed=False,
+    #     db=args.db_path,
+    #     data_path=args.data_path,
+    # )
+    # combine_retrieval(
+    #     split=args.split,
+    #     max_page=args.doc_count,
+    #     max_sent=args.sent_count,
+    #     max_tabs=args.tab_count,
+    #     data_path=args.data_path,
+    # )
 
-    # Select specific cells in re-ranked tables as evidence
-    cell_retrieval(
-        input_path=os.path.join(
-            args.data_path,
-            "{}.combined.not_precomputed.p{}.s{}.t{}.jsonl".format(
-                args.split, args.doc_count, args.sent_count, args.tab_count
-            ),
-        ),
-        wiki_path=args.db_path,
-        config_path=args.config_path_cell_retriever,
-    )
+    # # Select specific cells in re-ranked tables as evidence
+    # cell_retrieval(
+    #     input_path=os.path.join(
+    #         args.data_path,
+    #         "{}.combined.not_precomputed.p{}.s{}.t{}.jsonl".format(
+    #             args.split, args.doc_count, args.sent_count, args.tab_count
+    #         ),
+    #     ),
+    #     wiki_path=args.db_path,
+    #     config_path=args.config_path_cell_retriever,
+    # )
 
     # Predict verdict based on retrieved evidence
     predict_verdict(

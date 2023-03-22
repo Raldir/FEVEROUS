@@ -26,7 +26,7 @@ INSTALL_REQS = [
 
 setup(
     name="feverous",
-    version="0.51",
+    version="0.52",
     description="Repository for Fact Extraction and VERification Over Unstructured and Structured information (FEVEROUS), used for the FEVER Workshop Shared Task at EMNLP2021.",
     long_description=README,
     long_description_content_type="text/markdown",
