@@ -81,7 +81,7 @@ def compute_metrics(pred):
 def model_trainer(train_dataset, test_dataset, config):
     model = AutoModelForSequenceClassification.from_pretrained(
         config["model_name"], num_labels=3, return_dict=True
-    )  # protobuf
+    ).to(config["device"])  # protobuf
     #     model = AutoModelForSequenceClassification.from_pretrained(
     #     "cross-encoder/nli-deberta-v3-large", num_labels=3, return_dict=True
     # )  # protobuf
@@ -201,6 +201,9 @@ def train_verdict_predictor(input_path: str, config_path: str, wiki_path: str, s
 
     anno_processor_dev = AnnotationProcessor(dev_data_path, with_content=False)
     annotations_dev = [annotation for annotation in anno_processor_dev]
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    config["device"] = device
 
     claim_evidence_predictor(annotations_train, annotations_dev, feverous_db, config)
 

@@ -86,16 +86,16 @@ if __name__ == "__main__":
     # )
 
     # # Select specific cells in re-ranked tables as evidence
-    # cell_retrieval(
-    #     input_path=os.path.join(
-    #         args.data_path,
-    #         "{}.combined.not_precomputed.p{}.s{}.t{}.jsonl".format(
-    #             args.split, args.doc_count, args.sent_count, args.tab_count
-    #         ),
-    #     ),
-    #     wiki_path=args.db_path,
-    #     config_path=args.config_path_cell_retriever,
-    # )
+    cell_retrieval(
+        input_path=os.path.join(
+            args.data_path,
+            "{}.combined.not_precomputed.p{}.s{}.t{}.jsonl".format(
+                args.split, args.doc_count, args.sent_count, args.tab_count
+            ),
+        ),
+        wiki_path=args.db_path,
+        config_path=args.config_path_cell_retriever,
+    )
 
     # Predict verdict based on retrieved evidence
     predict_verdict(

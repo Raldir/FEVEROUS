@@ -78,10 +78,7 @@ def compute_metrics(pred):
 
 
 def model_trainer(test_dataset, config):
-    # model = AutoModelForSequenceClassification.from_pretrained(
-    #     "cross-encoder/nli-deberta-v3-large", num_labels=3, return_dict=True
-    # )
-    model = AutoModelForSequenceClassification.from_pretrained(config["model_path"], num_labels=3, return_dict=True)
+    model = AutoModelForSequenceClassification.from_pretrained(config["model_path"], num_labels=3, return_dict=True).to(config["device"])
 
     training_args = TrainingArguments(
         output_dir="./results",  # output directory
@@ -113,9 +110,6 @@ def report_average(reports):
 
 
 def claim_evidence_predictor(annotations_dev, feverous_db, input_path, config):
-    # map_index_to_verdict = {0:'NOT ENOUGH INFO', 1:'SUPPORTS', 2:'REFUTES'}
-    # map_verdict_to_index = {'NOT ENOUGH INFO': 0, 'SUPPORTS': 1, 'REFUTES': 2}
-
     map_verdict_to_index = config["map_verdict_to_index"]
     map_index_to_verdict = {y: x for x, y in map_verdict_to_index.items()}
 
@@ -162,6 +156,9 @@ def predict_verdict(input_path: str, config_path: str, wiki_path: str) -> None:
 
     with open(config_path, "r") as f:
         config = json.load(f)
+    
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    config["device"] = device
 
     claim_evidence_predictor(annotations_dev, feverous_db, input_path, config)
 

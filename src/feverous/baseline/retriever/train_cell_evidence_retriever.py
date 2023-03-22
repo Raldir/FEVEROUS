@@ -114,7 +114,7 @@ def compute_metrics(pred):
 
 def model_trainer(train_dataset, test_dataset, config):
     # model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels =4)
-    model = RobertaForTokenClassification.from_pretrained(config["model_name"], num_labels=3, return_dict=True)
+    model = RobertaForTokenClassification.from_pretrained(config["model_name"], num_labels=3, return_dict=True).to(config["device"])
 
     training_args = TrainingArguments(
         output_dir=config["model_path"],  # output directory
@@ -313,6 +313,10 @@ def train_cell_retriever(input_path: str, wiki_path: str, config_path: str):
     anno_processor_dev = AnnotationProcessor(data_path_dev, limit=10)
     annotations_train = [annotation for annotation in anno_processor_train]
     annotations_dev = [annotation for annotation in anno_processor_dev]
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    config["device"] = device
+
     trainer_cell_retriever(annotations_train, annotations_dev, db, config)
 
 
