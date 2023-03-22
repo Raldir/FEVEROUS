@@ -39,7 +39,7 @@ Create a new Conda environment and install torch:
 ```bash
 conda create -n feverous python=3.8
 conda activate feverous
-conda install pytorch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0 -c pytorch
+conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -c pytorch
 ```
 
 or with pip
@@ -47,7 +47,7 @@ or with pip
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install torch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0
+pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1
 pip install .
 ```
 
