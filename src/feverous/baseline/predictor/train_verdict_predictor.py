@@ -81,7 +81,9 @@ def compute_metrics(pred):
 def model_trainer(train_dataset, test_dataset, config):
     model = AutoModelForSequenceClassification.from_pretrained(
         config["model_name"], num_labels=3, return_dict=True
-    ).to(config["device"])  # protobuf
+    ).to(
+        config["device"]
+    )  # protobuf
     #     model = AutoModelForSequenceClassification.from_pretrained(
     #     "cross-encoder/nli-deberta-v3-large", num_labels=3, return_dict=True
     # )  # protobuf
@@ -167,7 +169,7 @@ def claim_evidence_predictor(annotations_train, annotations_dev, feverous_db, co
 
     tokenizer = AutoTokenizer.from_pretrained(config["model_name"])
     # tokenizer = AutoTokenizer.from_pretrained(
-        # "cross-encoder/nli-deberta-v3-large"
+    # "cross-encoder/nli-deberta-v3-large"
     # )  # ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli')
     text_train = tokenizer(text_train, padding=True, truncation=True)
     train_dataset = FEVEROUSDataset(text_train, labels_train)
@@ -202,7 +204,7 @@ def train_verdict_predictor(input_path: str, config_path: str, wiki_path: str, s
     anno_processor_dev = AnnotationProcessor(dev_data_path, with_content=False)
     annotations_dev = [annotation for annotation in anno_processor_dev]
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     config["device"] = device
 
     claim_evidence_predictor(annotations_train, annotations_dev, feverous_db, config)

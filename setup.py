@@ -3,7 +3,9 @@ from setuptools import find_packages, setup
 import os
 import pathlib
 
-
+# Commands: 
+# python setup.py sdist
+# twine upload dist/*
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
 

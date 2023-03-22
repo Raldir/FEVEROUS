@@ -26,6 +26,7 @@ logger = LogHelper.get_logger(__name__)
 
 TOKENIZER = SpacyTokenizer(annotators=set(["ner"]))
 
+
 class AnnotationProcessor:
     """
     Iterable to process the annotation files to yield annotation objects.

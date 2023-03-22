@@ -82,7 +82,7 @@ def prepare_input_schlichtkrull(annotation: Dict[str, any], has_gold: bool, db: 
         evidence_combined = []
         count = 0
         for i, evidence in enumerate(evidence_gold):
-            rand_ceil = adding_noise_prob * ((i + 1)) # Adding more noise the larger index
+            rand_ceil = adding_noise_prob * ((i + 1))  # Adding more noise the larger index
             rand = random.uniform(0, 1)
             if rand < rand_ceil and count < len(evidence_pred):
                 evidence_combined.append(evidence_pred[count])

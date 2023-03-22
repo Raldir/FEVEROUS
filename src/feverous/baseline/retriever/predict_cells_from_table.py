@@ -77,8 +77,9 @@ def compute_metrics(pred):
 
 def model_trainer(test_dataset, config):
     # model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels =4)
-    model = AutoModelForTokenClassification.from_pretrained(config["model_path"], num_labels=3, return_dict=True).to(config["device"])
-
+    model = AutoModelForTokenClassification.from_pretrained(config["model_path"], num_labels=3, return_dict=True).to(
+        config["device"]
+    )
 
     # /anfs/bigdisc/rmya2/faiss_data/results_table_to_cell2/checkpoint-1400/'
     training_args = TrainingArguments(
@@ -347,7 +348,7 @@ def cell_retrieval(input_path: str, config_path: str, wiki_path: str, trivial_ba
     # annotations.sort(key=lambda x: x.source, reverse=True)
     logger.info("Start extracting cells from Tables...")
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     config["device"] = device
 
     extract_cells_from_tables(annotations, input_path, wiki_path, trivial_baseline, config)

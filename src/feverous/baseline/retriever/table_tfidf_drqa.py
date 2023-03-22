@@ -115,7 +115,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--db", type=str, help="/path/to/saved/db.db")
-    parser.add_argument("--model", efault="data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz", type=str, help="/path/to/saved/db.db")
+    parser.add_argument(
+        "--model",
+        efault="data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz",
+        type=str,
+        help="/path/to/saved/db.db",
+    )
     parser.add_argument("--max_page", type=int)
     parser.add_argument("--max_tabs", type=int)
     parser.add_argument("--use_precomputed", type=str2bool, default=True)

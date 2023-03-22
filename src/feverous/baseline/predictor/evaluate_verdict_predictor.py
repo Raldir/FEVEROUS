@@ -78,7 +78,9 @@ def compute_metrics(pred):
 
 
 def model_trainer(test_dataset, config):
-    model = AutoModelForSequenceClassification.from_pretrained(config["model_path"], num_labels=3, return_dict=True).to(config["device"])
+    model = AutoModelForSequenceClassification.from_pretrained(
+        config["model_path"], num_labels=3, return_dict=True
+    ).to(config["device"])
 
     training_args = TrainingArguments(
         output_dir="./results",  # output directory
@@ -156,8 +158,8 @@ def predict_verdict(input_path: str, config_path: str, wiki_path: str) -> None:
 
     with open(config_path, "r") as f:
         config = json.load(f)
-    
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     config["device"] = device
 
     claim_evidence_predictor(annotations_dev, feverous_db, input_path, config)
