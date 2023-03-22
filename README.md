@@ -20,7 +20,8 @@ Unstructured and Structured information](https://arxiv.org/pdf/2106.05707.pdf).
 Visit [http://fever.ai](https://fever.ai/task.html) to find out more about the FEVER Workshop 2021 shared task @EMNLP on FEVEROUS.
 
 ## Change Log
-* **6 March 2023** - Compatibility updates and refactoring code of reading Wikipedia and running the baseline for increased accessibility.
+* **21 March 2023** - Updated code and execution pipeline for FEVEROUS baseline.
+* **06 March 2023** - Compatibility updates and refactoring code of reading Wikipedia.
 * **24 Sep 2021** - The Feverous repository is now also accessible through PyPI. Install it using `python -m pip install feverous`.
 * **24 Sep 2021** - The Feverous repository is now also accessible through PyPI. Install it using `python -m pip install feverous`.
 * **Nov 2021** - FEVEROUS Shared Task Description paper is now [online](https://aclanthology.org/2021.fever-1.1.pdf). Congratulations to all participating teams!
@@ -38,7 +39,7 @@ Create a new Conda environment and install torch:
 ```bash
 conda create -n feverous python=3.8
 conda activate feverous
-conda install pytorch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0 -c pytorch
+conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -c pytorch
 ```
 
 or with pip
@@ -46,7 +47,7 @@ or with pip
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install torch==1.7.0 torchvision==0.8.0 torchaudio==0.7.0
+pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1
 pip install .
 ```
 
@@ -77,8 +78,8 @@ After downloading the data, unpack the Wikipedia data into the same folder (i.e.
 This repository contains elementary code to assist you in reading and processing the provided Wikipedia data. By creating a a `WikiPage` object using the json data of a Wikipedia article, every element of an article is instantiated as a `WikiElement` on top of several utility functions you can then use (e.g. get an **element's context**, get an element by it's annotation id, ...).
 
 ```python
-from database.feverous_db import FeverousDB
-from utils.wiki_page import WikiPage
+from feverous.database.feverous_db import FeverousDB
+from feverous.utils.wiki_page import WikiPage
 
 db =  FeverousDB("path_to_the_wiki")
 
@@ -153,8 +154,8 @@ To run the baseline, you can either execute each individual step manually (see `
  python3 examples/baseline.py --split dev --doc_count 5 --sent_count 5 --tab_count 3 --config_path_cell_retriever src/feverous/baseline/retriever/config_roberta.json --config_path_verdict_predictor src/feverous/baseline/predictor/config_roberta_old.json
 
 ```
-
- Note that the python file assumes that you have downloaded models and data and placed them into the appropriate folder, as instructed above. For details on how to re-train the deployed models youself, see `baseline/README`. 
+The script will create several intermediate prediction files, the final one being `data/dev.combined.not_precomputed.p5.s5.t3.cells.verdict.jsonl`.
+Note that the python file assumes that you have downloaded models and data and placed them into the appropriate folder, as instructed above. For details on how to re-train the deployed models youself, see `baseline/README`. 
 
 
 ## Evaluation
@@ -169,7 +170,10 @@ Note that any input file needs to define the fields `label`, `predicted_label`, 
 
 ## Leaderboard Submission
 
-Submission to the FEVEROUS Leaderboard remain open and are done via the EvalAI platform: https://eval.ai/web/challenges/challenge-page/1091/. Submissions are listed under the *After Competition: Test Phase*. You can also submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used. The shared task which closed on the 27. July 2021 was run on the same blind test data.
+Submission to the FEVEROUS Leaderboard remain open and are done via the EvalAI platform: https://eval.ai/web/challenges/challenge-page/1091/. 
+
+Submissions are listed under the *After Competition: Test Phase*. You can also submit your predictions on the development split to get familar with the submission system. When submitting system predictions, you need to specify the system name, and, if available a link to the code. The Team name you specified on EvalAI will be used. The shared task which closed on the 27. July 2021 was run on the same blind test data.
+
 
 Submission files have to be in the same format as required for `evaluate.py`. To convert predictions from the verdict prediction step to the leaderboard submission format, call the script `prepare_submission.py`.
 
