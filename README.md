@@ -47,11 +47,11 @@ or with pip
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1
-pip install .
+python3 -m pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1
+python3 -m pip install .
 ```
 
-Then install the package requirements specified in `src/feverous/requirements.txt`. Then install the English Spacy model `python -m spacy download en_core_web_sm`.
+Then install the package requirements specified in `src/feverous/requirements.txt`. Then install the English Spacy model `python3 -m spacy download en_core_web_sm`.
 
 Code has been tested for `python3.7` and `python3.8`.
 
@@ -142,8 +142,8 @@ wiki_lists[0].get_list_by_level(0) #returns list elements by level
 Our baseline retriever module consists of following steps:
 
 1. Bulding a TF-IDF index for retrieval using Wikipedia's introductory sections (using DrQA).
-2. Select evidence documents using a combination of entity matching and TF-IDF using DrQA.
-3. Rerank the sentences and tables within the selected documents, keeping the top l sentences and q tables. Sentences and Tables are socred separately using TF-IDF. We set l=5 and q=3 in the paper. 
+2. Select evidence documents using a combination of entity matching and TF-IDF (using DrQA).
+3. Rerank the sentences and tables within the selected documents, keeping the top l sentences and q tables. Sentences and Tables are scored separately using TF-IDF. We set l=5 and q=3 in the paper. 
 4. Select relevant cells from tables using a fine-tuned transformer, treating the task as a sequence labelling problem. The Cell extraction model as used to preduce the results in our paper can be downloaded [here](https://drive.google.com/file/d/1Zu3RUFzThPpsSkBhlYc0CBoRpIRxauGR/view?usp=sharing). Extract the model and place it into the folder `models`.  
 5. Predict the claim's veracity via the retrieved sentence and table/cell evidence, using a fine-tuned transformer. You can download our fine-tuned model [here](https://drive.google.com/file/d/1SoxeTDp2NETbZdMpEle_QO8Cw0oxgUbV/view?usp=sharing).
 
