@@ -47,11 +47,11 @@ or with pip
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1
-pip install .
+python3 -m pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1
+python3 -m pip install .
 ```
 
-Then install the package requirements specified in `src/feverous/requirements.txt`. Then install the English Spacy model `python -m spacy download en_core_web_sm`.
+Then install the package requirements specified in `src/feverous/requirements.txt`. Then install the English Spacy model `python3 -m spacy download en_core_web_sm`.
 
 Code has been tested for `python3.7` and `python3.8`.
 
