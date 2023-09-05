@@ -225,7 +225,7 @@ class WikiPage:
         return [self.title] + section_context
 
     def _get_cell_header_context(self, cell):
-        table = self.page_items[cell]
+        table = None
         for ele in self.get_tables():
             if ele.name.split("_")[-1] == cell.split("_")[2]:
                 table = ele
