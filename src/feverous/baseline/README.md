@@ -34,7 +34,7 @@ To extract relevant cells from extracted tables, run:
 ### Verdict Prediction
 To predict the verdict given either download our fine-tuned model  [here](https://drive.google.com/file/d/1SoxeTDp2NETbZdMpEle_QO8Cw0oxgUbV/view?usp=sharing) or train it yourself (c.f. Training). Then run:
 ```bash
-python3 -m src.feverous.baseline.predictor.evaluate_verdict_predictor --input_path ../data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl --wiki_path ../data/feverous_wikiv1.db --model_path ../models/feverous_verdict_predictor
+python3 -m src.feverous.baseline.predictor.evaluate_verdict_predictor --input_path ../data/dev.combined.not_precomputed.p5.s5.t3.cells.jsonl --wiki_path ../data/feverous_wikiv1.db --config_path feverous/baseline/predictor/config_debertav3_fever.json
  ```
 
 ### Training
