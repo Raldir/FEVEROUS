@@ -24,7 +24,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 fmt = logging.Formatter("%(asctime)s: [ %(message)s ]", "%m/%d/%Y %I:%M:%S %p")
 console = logging.StreamHandler()
-console.setFormatter(fmt)
+console.setFormatter(fmt) 
 logger.addHandler(console)
 
 
@@ -63,6 +63,7 @@ def tokenize(text):
 def count(ngram, hash_size, doc_id):
     """Fetch the text of a document and compute hashed ngrams counts."""
     global DOC2IDX
+    print(f'DOC2IDX: {DOC2IDX}')
     row, col, data = [], [], []
     # Tokenize
     tokens = tokenize(retriever.utils.normalize(fetch_text(doc_id)))
@@ -75,7 +76,12 @@ def count(ngram, hash_size, doc_id):
 
     # Return in sparse matrix data format.
     row.extend(counts.keys())
-    col.extend([DOC2IDX[doc_id]] * len(counts))
+    print(f"DOC2IDX: {DOC2IDX}")
+    if doc_id in DOC2IDX:
+        col.extend([DOC2IDX[doc_id]] * len(counts))
+    else:
+        print(f"Warning: {doc_id} not found in DOC2IDX")
+
     data.extend(counts.values())
     return row, col, data
 
