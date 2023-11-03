@@ -17,7 +17,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--split", type=str, default="dev", help="Name of Split.")
     parser.add_argument("--data_path", type=str, default="data/", help="Path to data folder.")
-    parser.add_argument("--db_path", type=str, default="data/feverous_wikiv1.db", help="Path to FEVEROUS DB.")
+    parser.add_argument("--db_path", type=str, default="data/feverous-wiki-pages.db", help="Path to FEVEROUS DB.")
 
     parser.add_argument(
         "--tf_idf_db_path",

@@ -41,11 +41,10 @@ conda create -n feverous python=3.8
 conda activate feverous
 ```
 
-Then install all relevant packages via pip:
+Then install feverous and all relevant dependencies:
 
 ```bash
-python3 -m pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1
-python3 -m pip install .
+python3 -m pip install -e .
 ```
 
 Finally install the English Spacy model `python3 -m spacy download en_core_web_sm`.
