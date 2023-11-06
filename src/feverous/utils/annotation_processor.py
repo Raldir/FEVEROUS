@@ -98,6 +98,7 @@ class Annotation:
             self.flat_titles = [el.split("_")[0] for el in self.flat_evidence]
             self.context = [el["context"] for el in annotation_json["evidence"]]
             self.flat_context = {}
+            self.challenge = annotation_json["challenge"]
             for ele in self.context:
                 self.flat_context.update(ele)
             self.num_evidence = len(self.evidence)

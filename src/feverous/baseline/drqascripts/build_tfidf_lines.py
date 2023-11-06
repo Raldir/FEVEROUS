@@ -55,8 +55,3 @@ class OnlineTfidfDocRanker(TfidfDocRanker):
         self.doc_dict = metadata["doc_dict"]
         self.num_docs = len(self.doc_dict[0])
         self.strict = strict
-
-
-# ------------------------------------------------------------------------------
-# Main.
-# ------------------------------------------------------------------------------

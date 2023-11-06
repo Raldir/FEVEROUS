@@ -24,6 +24,7 @@ INSTALL_REQS = [
     "scikit-learn<=1.0.2",
     "jsonlines>=2.0.0, <= 3.1.0",
     "tqdm>=4.46.0, <= 4.64.1",
+    "torch==1.13.1, == 1.13.1",
 ]
 
 setup(

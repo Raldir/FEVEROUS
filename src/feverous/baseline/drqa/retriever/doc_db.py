@@ -43,18 +43,6 @@ class DocDB(object):
         cursor.close()
         return results
 
-    def get_doc_json(self, doc_id):
-        """Fetch the raw text of the doc for 'doc_id'."""
-        cursor = self.connection.cursor()
-        cursor.execute(
-            "SELECT data FROM wiki WHERE id = ?",
-            # (utils.normalize(doc_id),)
-            (doc_id,),
-        )
-        result = cursor.fetchone()
-        cursor.close()
-        return result if result is None else result[0]
-
     def get_doc_text(self, doc_id):
         """Fetch the raw text of the doc for 'doc_id'."""
         cursor = self.connection.cursor()
