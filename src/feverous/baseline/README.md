@@ -1,6 +1,6 @@
 
 ### Evidence Retrieval
- We first extract the top $k$ pages by matching extracted entities from the claim with Wikipedia articles. If less than k pages have been identified this way, the remaining pages are selected by Tf-IDF matching between the introductory sentence of an article and the claim. To use TF-IDF matching we need to build a TF-IDF index. Run the code from the directory `src`:
+ We first extract the top $k$ pages by matching extracted entities from the claim with Wikipedia articles. If less than k pages have been identified this way, the remaining pages are selected by Tf-IDF matching between the introductory sentence of an article and the claim. To use TF-IDF matching we need to build a TF-IDF index. Run the code from the directory `src`, assuming that the FEVEROUS datebase is the file `data/feverous_wikiv1.db`:
 
 ```bash
 python -m feverous.baseline.retriever.build_db --db_path ../data/feverous_wikiv1.db --save_path ../data/feverous-wiki-docs.db
