@@ -14,6 +14,7 @@ from collections import Counter
 from functools import partial
 from multiprocessing import Pool as ProcessPool
 from multiprocessing.util import Finalize
+import sys
 
 import numpy as np
 import scipy.sparse as sp
@@ -38,10 +39,13 @@ PROCESS_DB = None
 
 
 def init(tokenizer_class, db_class, db_opts):
-    global PROCESS_TOK, PROCESS_DB
+    global PROCESS_TOK, PROCESS_DB, DOC2IDX
     PROCESS_TOK = tokenizer_class()
     Finalize(PROCESS_TOK, PROCESS_TOK.shutdown, exitpriority=100)
     PROCESS_DB = db_class(**db_opts)
+    with db_class(**db_opts) as doc_db:
+        doc_ids = doc_db.get_doc_ids()
+    DOC2IDX = {doc_id: i for i, doc_id in enumerate(doc_ids)}
     Finalize(PROCESS_DB, PROCESS_DB.close, exitpriority=100)
 
 
@@ -91,13 +95,23 @@ def get_count_matrix(db, db_opts, ngram, hash_size, tokenizer, num_workers):
 
     M[i, j] = # times word i appears in document j.
     """
+    # Ray edit
+    print("db: ", db)
+    print("db_opts: ", db_opts)
+    print("ngram: ", ngram)
+    print("hash_size: ", hash_size)
+    print("tokenizer: ", tokenizer)
+    print("num_workers: ", num_workers)
+
     # Map doc_ids to indexes
     global DOC2IDX
     db_class = retriever.get_class(db)
+    
     with db_class(**db_opts) as doc_db:
         doc_ids = doc_db.get_doc_ids()
+    
     DOC2IDX = {doc_id: i for i, doc_id in enumerate(doc_ids)}
-
+    
     # Setup worker pool
     tok_class = tokenizers.get_class(tokenizer)
     workers = ProcessPool(num_workers, initializer=init, initargs=(tok_class, db_class, db_opts))
@@ -111,6 +125,7 @@ def get_count_matrix(db, db_opts, ngram, hash_size, tokenizer, num_workers):
     for i, batch in enumerate(batches):
         logger.info("-" * 25 + "Batch %d/%d" % (i + 1, len(batches)) + "-" * 25)
         for b_row, b_col, b_data in workers.imap_unordered(_count, batch):
+        #for b_row, b_col, b_data in _count(batch):
             row.extend(b_row)
             col.extend(b_col)
             data.extend(b_data)

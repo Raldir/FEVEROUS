@@ -8,6 +8,9 @@ from tqdm import tqdm
 
 from feverous.baseline.drqa.retriever import utils
 from feverous.baseline.drqa.retriever.doc_db import DocDB
+
+from feverous.database.feverous_db import FeverousDB  # added by Ray
+
 from feverous.baseline.drqascripts.build_tfidf_lines import OnlineTfidfDocRanker
 from feverous.utils.log_helper import LogHelper
 from feverous.utils.util import JSONLineReader
@@ -35,7 +38,8 @@ def tf_idf_claim(line, db, max_page, max_sent, ngram, hash_size, tokenizer, num_
         for page in pages:
             page = unicodedata.normalize("NFD", page)
             try:
-                lines = json.loads(db.get_doc_json(page))
+                #lines = json.loads(db.get_doc_json(page))
+                lines = db.get_doc_json(page)
             except:
                 continue
             current_page = WikiPage(page, lines)
@@ -77,12 +81,17 @@ def sentence_tfidf_retrieval(
     num_workers: int = None,
     model: str = "data/index/feverous-wiki-docs-tfidf-ngram=2-hash=16777216-tokenizer=simple.npz",
 ) -> None:
+    
+    #print(db.get_doc_json('Lake Haruna'))
+    #print('ray test')
+
     doc_freqs = None
     if use_precomputed:
         _, metadata = utils.load_sparse_csr(model)
         doc_freqs = metadata["doc_freqs"].squeeze()
 
-    db = DocDB(db)
+    #db = DocDB(db)
+    db = FeverousDB(db)  # added by Ray
 
     jlr = JSONLineReader()
 
@@ -136,6 +145,7 @@ if __name__ == "__main__":
 
     parser.add_argument("--num-workers", type=int, default=None, help="Number of CPU processes (for tokenizing, etc)")
     args = parser.parse_args()
+
 
     sentence_tfidf_retrieval(
         args.db,
