@@ -1,20 +1,14 @@
-import html
-import itertools
 import json
 import linecache
-import logging
 import os
 import pickle
-import re
-import sys
 import traceback
-import unicodedata
+
 
 import jsonlines
 from tqdm import tqdm
 
 from feverous.utils.log_helper import LogHelper
-from feverous.utils.wiki_element import WikiElement, process_text
 from feverous.utils.wiki_page import WikiPage
 
 LogHelper.setup()

@@ -1,21 +1,7 @@
-import html
 import itertools
-import json
-import linecache
 import logging
-import os
-import pickle
-import re
-import sys
-import traceback
-import unicodedata
-from urllib.parse import unquote
 
-import jsonlines
-from cleantext import clean
-from tqdm import tqdm
-
-from feverous.utils.wiki_element import WikiElement, process_text
+from feverous.utils.wiki_element import WikiElement
 from feverous.utils.wiki_list import WikiList
 from feverous.utils.wiki_section import WikiSection
 from feverous.utils.wiki_sentence import WikiSentence

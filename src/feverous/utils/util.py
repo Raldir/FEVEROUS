@@ -1,18 +1,11 @@
-import html
-import itertools
 import json
-import linecache
-import logging
 import os
-import pickle
-import re
-import sys
-import traceback
 import unicodedata
 from typing import Dict, List
 
-import jsonlines
-from tqdm import tqdm
+from urllib.parse import unquote
+from cleantext import clean
+
 
 from feverous.database.feverous_db import FeverousDB
 from feverous.utils.wiki_page import WikiPage

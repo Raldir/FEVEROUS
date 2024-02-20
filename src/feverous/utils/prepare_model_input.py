@@ -1,10 +1,5 @@
-import json
 from typing import Dict, List
-from urllib.parse import unquote
 import random
-
-import jsonlines
-from cleantext import clean
 
 from feverous.database.feverous_db import FeverousDB
 from feverous.utils.log_helper import LogHelper
@@ -14,7 +9,6 @@ from feverous.utils.util import (
     get_evidence_text_by_id,
     get_wikipage_by_id,
 )
-from feverous.utils.wiki_page import WikiPage
 
 LogHelper.setup()
 logger = LogHelper.get_logger(__name__)

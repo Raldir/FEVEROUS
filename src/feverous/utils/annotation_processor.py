@@ -1,14 +1,8 @@
 """
 Simple Annotation Wrapper that converts each annotation into an object with corresponding attributes.
 """
-import html
 import itertools
-import json
-import linecache
-import logging
 import os
-import pickle
-import re
 import sys
 import traceback
 from enum import Enum
