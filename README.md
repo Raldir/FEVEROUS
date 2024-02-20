@@ -96,7 +96,7 @@ A `WikiElement` defines/overrides four functions:
 ### Reading Sentences
 A `WikiSentence` object contains a single sentence from the Wikipedia Data with its id.
 
-```
+```python
 context_sentence_14 = wiki_page.get_context('sentence_14') # Returns list of context Wiki elements
 
 prev_elements = wiki_page.get_previous_k_elements('sentence_5', k=4) # Gets Wiki element before sentence_5
