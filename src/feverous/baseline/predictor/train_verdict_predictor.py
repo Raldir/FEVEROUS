@@ -13,7 +13,6 @@ from datetime import datetime
 import jsonlines
 import numpy as np
 import torch
-from sentence_transformers import CrossEncoder
 from sklearn.metrics import accuracy_score, classification_report, precision_recall_fscore_support
 from sklearn.model_selection import KFold, train_test_split
 from tqdm import tqdm
